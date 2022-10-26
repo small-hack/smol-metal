@@ -39,7 +39,18 @@ docker run --platform linux/amd64 -it \
 
 ```
 
+## Playbooks
 
+1. main-playbook.yaml
+  - setus up users, ssh keys, basic apt packagaes, apt-update/upgrade, fail2ban jails, and uses scrap-metal to set the cpu to performance mode
+  
+2. brew_install.yaml
+  - clones the brew repo, installs it and sets the env vars correctly
+  
+3. firewall
+  - parses approved-ips.yaml and adds those items to a uwf firewall
+
+4. 
 ## Specs
 
 ```bash
