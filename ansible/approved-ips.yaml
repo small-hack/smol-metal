@@ -1,0 +1,49 @@
+---
+Clients:
+  - Name: Open all ips for HTTP and HTTPS
+    IP: any
+    Proto: tcp
+    Ports:
+      - 443
+      - 80
+  - Name: Wireguard vpn udp
+    IP: 10.0.0.0/24
+    Proto: udp
+    Ports:
+      - 51820
+  - Name: Wireguard vpn tcp
+    IP: 10.0.0.0/24
+    Proto: tcp
+    Ports:
+      - 22
+      - 23
+      - 443
+      - 80
+      - 5201
+      - 8080
+      - 8088
+      - 8086
+      - 5900
+      - 5901
+  - Name: max-home-ip-tcp
+    IP: 178.85.156.146
+    Proto: tcp
+    Ports:
+      - 22
+      - 23
+      - 1234
+      - 1235
+      - 1236
+      - 873
+      - 5900
+      - 5901
+      - 5902
+  - Name: max-home-ip-udp
+    IP: 178.85.156.146
+    Proto: udp
+    Ports:
+      - 23
+      - 51820
+      - 5900
+      - 5901
+ 

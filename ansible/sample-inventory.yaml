@@ -1,0 +1,9 @@
+all:
+  hosts:
+    hetzner:
+      ansible_connection: ssh
+      ansible_host: "ip-address-goes-here"
+      ansible_user: "some-user"
+      ansible_ssh_user: "some-user"
+      ansible_ssh_password: "some-password"
+      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

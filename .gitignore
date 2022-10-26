@@ -1,0 +1,5 @@
+ansible/.vault_pass
+ansible/cmdb
+ansible/out
+ansible/inventory.yaml
+ansible/ansible.log

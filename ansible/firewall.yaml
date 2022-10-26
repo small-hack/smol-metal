@@ -1,0 +1,66 @@
+- hosts: hetzner
+  gather_facts: yes
+  vars:
+    approved_ips: "{{ lookup('file', 'approved-ips.yaml' ) | from_yaml }}"
+
+  tasks:
+            
+    - name: Install Uncomplicated Firewall
+      apt:
+        name: ufw
+        state: present
+        install_recommends: yes
+        autoclean: yes
+        allow_unauthenticated: yes
+        force_apt_get: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: schedule a reboot to save us incase this goes bad
+      ansible.builtin.shell: shutdown +5
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: stop the firewall
+      community.general.ufw:
+        state: reset
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Copy firewall config file to client
+      ansible.builtin.copy:
+        src: "ufw"
+        dest: "/etc/default/ufw"
+        owner: root
+        mode: 0644
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: setup firewall to allow ssh from approved user IPs
+      ansible.builtin.shell: ufw allow from "{{ item[0].IP }}" proto "{{ item[0].Proto }}" to any port "{{ item[1] }}"
+      with_subelements: 
+        - "{{ approved_ips['Clients'] }}"
+        - Ports
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: enable the firewall
+      community.general.ufw:
+        state: enabled
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Cancel the reboot if we made it here
+      ansible.builtin.shell: shutdown -c
+      become: yes
+      become_user: root
+      become_method: sudo
+
+
+
