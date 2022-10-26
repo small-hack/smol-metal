@@ -1,0 +1,85 @@
+- hosts: all
+  gather_facts: true
+
+  tasks:
+
+    - name: downloading items from the internet
+      get_url:
+        url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        dest: "/home/max/install.sh"
+      become: yes
+      become_user: max
+      become_method: sudo
+
+    - name: downloading items from the internet
+      get_url:
+        url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        dest: "/home/jesse/install.sh"
+      become: yes
+      become_user: jesse
+      become_method: sudo
+
+    - name: change homebrew permissions
+      ansible.builtin.shell: chmod +x /home/max/install.sh
+      become: yes
+      become_user: max
+      become_method: sudo
+  
+    - name: change homebrew permissions
+      ansible.builtin.shell: chmod +x /home/jesse/install.sh
+      become: yes
+      become_user: jesse
+      become_method: sudo
+
+    - name: change ownership
+      ansible.builtin.shell: chmod 777 /home/max/install.sh
+      become: yes
+      become_user: max
+      become_method: sudo
+
+    - name: change ownership
+      ansible.builtin.shell: chmod 777 /home/jesse/install.sh
+      become: yes
+      become_user: jesse
+      become_method: sudo
+
+    - name: install brew
+      ansible.builtin.shell: NONINTERACTIVE=1 /bin/bash /home/max/install.sh
+      become: yes
+      become_user: max
+      become_method: sudo
+
+    - name: create max .profile
+      ansible.builtin.shell: touch /home/max/.profile
+      become: yes
+      become_user: max
+      become_method: sudo
+
+    - name: create jesse .profile
+      ansible.builtin.shell: touch /home/jesse/.profile
+      become: yes
+      become_user: jesse
+      become_method: sudo
+
+    - name: add to max's path
+      ansible.builtin.lineinfile:
+        path: /home/max/.profile
+        create: yes
+        line: 'export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"'
+      become: yes
+      become_user: max
+      become_method: sudo
+
+    - name: add to jesse's path
+      ansible.builtin.lineinfile:
+        path: /home/jesse/.profile
+        create: yes
+        line: ' export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"'
+      become: yes
+      become_user: jesse
+      become_method: sudo
+
+
+
+
+
