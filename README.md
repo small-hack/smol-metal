@@ -35,7 +35,8 @@ docker run --platform linux/amd64 -it \
   runner ansible-playbook main-playbook.yaml \
   -i inventory.yaml \
   --extra-vars \
-  "max_password=$(bw get password max-hetzner)"
+  "max_password='$(bw get password max-hetzner)' \
+   jesse_password='$(bw get password jesse-hetzner-ssh-encrypted)'"
 
 ```
 
