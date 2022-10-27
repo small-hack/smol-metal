@@ -1,0 +1,22 @@
+[Interface]
+# The address your computer will use on the VPN
+Address = {{ starting_ip }}/24
+
+## This Desktop/client's private key ##
+PrivateKey = {{ private_key }}
+
+[Peer]
+# VPN server's wireguard public key
+PublicKey = {{ hostvars['localhost'].server_public_key }}
+
+# Public IP address of your VPN server (USE YOURS!)
+# Use the floating IP address if you created one for your VPN server
+Endpoint = {{ hostvars['localhost'].server_ip }}:51820
+
+# 10.0.0.0/24 is the VPN subnet
+AllowedIPs = 10.0.0.0/24
+
+# To keep a connection open from the server to this client
+# (Use if you're behind a NAT, e.g. on a home network, and
+# want peers to be able to connect to you.)
+PersistentKeepalive = 15

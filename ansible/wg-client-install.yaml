@@ -1,0 +1,193 @@
+- hosts: localhost
+  vars:
+    server_private_key: "{{ lookup('file', '{{ playbook_dir}}/wg_server_keys/privatekey' ) }}"
+    server_public_key: "{{ lookup('file', '{{ playbook_dir }}/wg_server_keys/publickey' ) }}"
+    server_ip: "{{ lookup('file', '{{ playbook_dir }}/wg_server_keys/ip-address' ) }}"
+
+  tasks:
+  # loading data from files
+  - name: Setting server public ip as fact
+    set_fact:
+      server_ip: "{{ server_ip }}"
+
+  - name: debug
+    debug:
+      msg: "{{ server_ip }}"
+
+  - name: Setting server public key as fact
+    set_fact:
+      server_private_key: "{{ server_private_key }}"
+
+  - name: debug
+    debug:
+      msg: "{{ server_private_key }}"
+
+  - name: Setting server private key as fact
+    set_fact:
+      server_public_key: "{{ server_public_key }}"
+
+- hosts: bradley
+  gather_facts: yes
+  serial: 1
+  vars:
+   ips: "{{ lookup('file', '{{ playbook_dir }}/ips.yaml' ) | from_yaml }}"
+
+  tasks:
+   # setting ip addresses
+    - name: Echo the starting IP
+      set_fact:
+        starting_ip: "{{ ips.clients | last }}"
+    - debug: var=starting_ip
+
+    - name: Extract the last octet, increment it and store it
+      set_fact: octet={{ starting_ip.split('.')[3] | int + 1 }}
+    - debug: var=octet
+
+    - name: Append the incremented octet to the first 3 octets
+      set_fact: next_ip="{{ starting_ip | regex_replace('(^.*\.).*$', '\\1') }}{{octet}}"
+    - debug: var=next_ip
+
+    - name: set ips as fact
+      set_fact: client_ips="{{ ips.clients + [ next_ip ] }}"
+    - debug: var=client_ips
+
+    - name: Writing vars to file yaml
+      ansible.builtin.copy:
+        dest: ./ips.yaml
+        content:  |
+          --- 
+          subnet: {{ ips.subnet }}
+          server: {{ ips.server }}
+          clients: 
+          {{ client_ips | to_nice_yaml }}
+
+    - name: save the file
+      ansible.builtin.fetch:
+        src: ./ips.yaml
+        dest: ./ips.yaml
+        flat: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+  # install and configure wireguard
+
+    - name: Install wireguard
+      apt:
+        name: wireguard
+        state: present
+        update_cache: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: generate public and private keys
+      shell:
+        cmd: umask 077 && wg genkey | tee privatekey | wg pubkey > publickey
+        chdir: /etc/wireguard
+        creates: /etc/wireguard/publickey
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: read public key
+      command: cat /etc/wireguard/publickey
+      register: publickey_contents
+      changed_when: False
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: set public key fact
+      set_fact:
+        public_key: "{{ publickey_contents.stdout }}"
+
+    - name: read private key
+      command: cat /etc/wireguard/privatekey
+      register: privatekey_contents
+      changed_when: False
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: set private key fact
+      set_fact:
+        private_key: "{{ privatekey_contents.stdout }}"
+
+    - name: store the private key
+      ansible.builtin.fetch:
+        src: /etc/wireguard/privatekey
+        dest: ./wg/client_keys/{{ starting_ip }}/privatekey
+        flat: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: store the public key
+      ansible.builtin.fetch:
+        src: /etc/wireguard/publickey
+        dest: ./wg/client_keys/{{ starting_ip }}/publickey
+        flat: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+    
+    - name: create client wireguard config
+      template:
+        dest: /etc/wireguard/wg0.conf
+        src: client_wg0.conf.j2
+        owner: root
+        group: root
+        mode: '0600'
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: start wireguard and enable on boot
+      systemd:
+        name: wg-quick@wg0
+        enabled: yes
+        state: started
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    # Restarts WireGuard interface, loading any new config and running PostUp
+    # commands in the process.
+    - name: restart wireguard
+      shell: wg-quick down wg0; wg-quick up wg0
+      args:
+        executable: /bin/bash
+      become: yes
+      become_user: root
+      become_method: sudo
+
+- hosts: hetzner
+  gather_facts: yes
+  vars:
+    ips: "{{ lookup('file', '{{ playbook_dir }}/ips.yaml' ) | from_yaml }}"
+
+  tasks:
+
+    - name: append to wg config of the server for persistance
+      ansible.builtin.lineinfile:
+        path: /etc/wireguard/wg0.conf
+        line: |
+          [Peer]
+          PublicKey = {{ lookup('file', '{{ playbook_dir }}/wg/client_keys/{{ item }}/publickey' ) }}
+          AllowedIPs = {{ item }}/32
+        create: yes
+      with_items: "{{ ips.clients }}"
+      when: item is defined 
+      become: yes
+      become_user: root
+      become_method: sudo
+      ignore_errors: yes 
+
+    - name: reload wireguard config
+      shell: wg syncconf wg0 <(wg-quick strip wg0)
+      args:
+        executable: /bin/bash
+      become: yes
+      become_user: root
+      become_method: sudo

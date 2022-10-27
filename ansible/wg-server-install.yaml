@@ -1,0 +1,158 @@
+- hosts: hetzner
+  gather_facts: yes
+  vars:
+    server_private_key: "{{ lookup('file', '{{ playbook_dir}}/wg_server_keys/privatekey' ) }}"
+    server_public_key: "{{ lookup('file', '{{ playbook_dir }}/wg_server_keys/publickey' ) }}"
+    ips: "{{ lookup('file', '{{ playbook_dir }}/ips.yaml' ) | from_yaml }}"
+
+  tasks:
+
+ # setting ip addresses
+    - name: Echo the starting IP
+      set_fact:
+        new_ip: "{{ ips.server }}"
+    - debug: var=new_ip
+
+    - name: Extract the last octet, increment it and store it
+      set_fact: octet={{ new_ip.split('.')[3] | int + 1 }}
+    - debug: var=octet
+
+    - name: Append the incremented octet to the first 3 octets
+      set_fact: next_ip="{{ new_ip | regex_replace('(^.*\.).*$', '\\1') }}{{octet}}"
+    - debug: var=next_ip
+
+    - name: set ips as fact
+      set_fact: client_ips="{{ ips.clients + [ next_ip ] }}"
+    - debug: var=client_ips
+
+    - name: Writing vars to file yaml
+      ansible.builtin.copy:
+        dest: ./ips.yaml
+        content:  |
+          --- 
+          subnet: {{ ips.subnet }}
+          server: {{ ips.server }}
+          clients: 
+          {{ client_ips | to_nice_yaml }}
+
+    - name: save the file
+      ansible.builtin.fetch:
+        src: ./ips.yaml
+        dest: ./ips.yaml
+        flat: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Install wireguard
+      apt:
+        name: wireguard
+        state: present
+        update_cache: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: generate public and private keys
+      shell:
+        cmd: umask 077 && wg genkey | tee privatekey | wg pubkey > publickey
+        chdir: /etc/wireguard
+        creates: /etc/wireguard/publickey
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: read public key
+      command: cat /etc/wireguard/publickey
+      register: publickey_contents
+      changed_when: False
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: set public key fact
+      set_fact:
+        public_key: "{{ publickey_contents.stdout }}"
+
+    - name: read private key
+      command: cat /etc/wireguard/privatekey
+      register: privatekey_contents
+      changed_when: False
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: set private key fact
+      set_fact:
+        private_key: "{{ privatekey_contents.stdout }}"
+
+    - name: save the private key
+      ansible.builtin.fetch:
+        src: /etc/wireguard/privatekey
+        dest: ./wg_server_keys/
+        flat: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: save the public key
+      ansible.builtin.fetch:
+        src: /etc/wireguard/publickey
+        dest: ./wg_server_keys/
+        flat: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: create server wireguard config
+      template:
+        dest: /etc/wireguard/wg0.conf
+        src: server_wg0.conf.j2
+        owner: root
+        group: root
+        mode: '0600'
+      become: yes
+      become_user: root
+      become_method: sudo
+  
+    - name: enable and persist ip forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: "1"
+        state: present
+        sysctl_set: yes
+        reload: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: start wireguard and enable on boot
+      systemd:
+        name: wg-quick@wg0
+        enabled: yes
+        state: started
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: reload wireguard config
+      shell: wg syncconf wg0 <(wg-quick strip wg0)
+      args:
+        executable: /bin/bash
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: save the server's public ip address to file
+      shell: |
+        echo '{{ ansible_default_ipv4.address }}' > /tmp/ip-address
+
+    - name: move ip address into keys
+      ansible.builtin.fetch:
+        src: /tmp/ip-address
+        dest: ./wg_server_keys/
+        flat: yes
+      become: yes
+      become_user: root
+      become_method: sudo
+
