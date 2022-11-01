@@ -15,8 +15,6 @@
       set_fact:
         jesse_password: "{{ jesse_password }}"
 
-
-
     - name: Ensure group "docker" exists
       ansible.builtin.group:
         name: docker
@@ -33,7 +31,7 @@
         append: no
         create_home: yes
         generate_ssh_key: no
-        password: "{{ max_password }}"
+        #password: "{{ max_password }}"
         state: present
         system: no
         force: yes
@@ -77,16 +75,16 @@
          
     - name: Add system user to the sudoers group
       copy:
-           dest: "/etc/sudoers.d/max"
-           content: "max  ALL=(ALL)  NOPASSWD: ALL"
+        dest: "/etc/sudoers.d/max"
+        content: "max  ALL=(ALL)  NOPASSWD: ALL"
       become: true
       become_user: root
       become_method: sudo
 
     - name: Add system user to the sudoers group
       copy:
-           dest: "/etc/sudoers.d/jesse"
-           content: "jesse  ALL=(ALL)  NOPASSWD: ALL"
+        dest: "/etc/sudoers.d/jesse"
+        content: "jesse  ALL=(ALL)  NOPASSWD: ALL"
       become: true
       become_user: root
       become_method: sudo
@@ -98,7 +96,7 @@
         autoclean: yes
         allow_unauthenticated: yes
         force_apt_get: yes
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
@@ -107,7 +105,7 @@
         upgrade: yes
         update_cache: yes
         cache_valid_time: 0
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
@@ -119,49 +117,100 @@
         autoclean: yes
         allow_unauthenticated: yes
         force_apt_get: yes
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
     - name: Copy fail2ban jail file to client
       ansible.builtin.copy:
-        src: "jail.local"
+        src: "configs/jail.local"
         dest: "/etc/fail2ban/jail.local"
         owner: root
         mode: 0644
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
     - name: start fail2ban
       ansible.builtin.shell: /usr/bin/fail2ban-client start || true
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
     - name: clone scrap metal
       ansible.builtin.git:
         repo: https://www.github.com/cloudymax/Scrap-Metal.git
-        dest: /usr/share/Scrap-Metal
-      become: yes
+        dest: /Scrap-Metal
+      become: true
       become_user: root
       become_method: sudo
 
     - name: Set Governor
-      ansible.builtin.shell: /usr/share/Scrap-Metal/virtual-machines/host-config-resources/governor.sh set_all_cores performance
-      become: yes
+      ansible.builtin.shell: /Scrap-Metal/virtual-machines/host-config-resources/governor.sh set_all_cores performance
+      become: true
       become_user: root
       become_method: sudo
 
     - name: install apt packages
       apt:
-        name: curl, wget, unzip, python3-pip
+        name: curl, wget, unzip, python3-pip, docker.io, docker-compose
         state: present
         install_recommends: yes
         autoclean: yes
         allow_unauthenticated: yes
         force_apt_get: yes
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
+    - name: download prometheus node exporter
+      ansible.builtin.get_url: 
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz
+        dest: /node_exporter-1.4.0.linux-amd64.tar.gz
+      become: true
+      become_user: root
+      become_method: sudo
+
+    - name: extract prometheus archive
+      ansible.builtin.unarchive:
+        src: /node_exporter-1.4.0.linux-amd64.tar.gz
+        dest: /
+        remote_src: yes
+      become: true
+      become_user: root
+      become_method: sudo
+
+    - name: Move prometheus node exporter binary to final location
+      command: mv /node_exporter-1.4.0.linux-amd64/node_exporter /usr/local/bin/node_exporter
+      become: true
+      become_user: root
+      become_method: sudo
+
+    - name: Copy prometheus node exporter service file to client
+      ansible.builtin.copy:
+        src: "configs/node_exporter.service"
+        dest: "/etc/systemd/system/node_exporter.service"
+        owner: root
+        mode: 0744
+      become: true
+      become_user: root
+      become_method: sudo
+  
+    - name: reload systemd daemon since we added a new service file
+      ansible.builtin.shell: systemctl daemon-reload
+      become: true
+      become_user: root
+      become_method: sudo
+ 
+    - name: enable node exporter service
+      ansible.builtin.shell: systemctl enable node_exporter.service
+      become: true
+      become_user: root
+      become_method: sudo
+  
+    - name: start node exporter service
+      ansible.builtin.shell: systemctl start node_exporter.service
+      become: true
+      become_user: root
+      become_method: sudo
+ 

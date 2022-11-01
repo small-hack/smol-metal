@@ -1,7 +1,7 @@
 - hosts: hetzner
   gather_facts: yes
   vars:
-    approved_ips: "{{ lookup('file', 'approved-ips.yaml' ) | from_yaml }}"
+    approved_ips: "{{ lookup('file', 'configs/approved-ips.yaml' ) | from_yaml }}"
 
   tasks:
             
@@ -32,7 +32,7 @@
 
     - name: Copy firewall config file to client
       ansible.builtin.copy:
-        src: "ufw"
+        src: "configs/ufw"
         dest: "/etc/default/ufw"
         owner: root
         mode: 0644

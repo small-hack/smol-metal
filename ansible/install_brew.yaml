@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: bradley
   gather_facts: true
 
   tasks:
@@ -54,7 +54,7 @@
       ansible.builtin.lineinfile:
         path: /home/jesse/.profile
         create: yes
-        line: ' export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"'
+        line: 'export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"'
       become: yes
       become_user: jesse
       become_method: sudo
@@ -65,6 +65,19 @@
       become_user: max
       become_method: sudo
 
+        #    - name: install onboardme
+        #      ansible.builtin.shell: /usr/bin/pip3.10 install onboardme
+        #      become: yes
+        #      become_user: max
+        #      become_method: sudo
+
+        #    - command: /home/max/.local/bin/onboardme -O
+        #      register: cmd_res
+        #      retries: 100
+        #      until: cmd_res.stdout_lines | reject('search','jessebot.github.io/onboardme') | list | count == 0
+        #      become: yes
+        #      become_user: max
+        #      become_method: sudo
 
 
 

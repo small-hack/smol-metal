@@ -1,0 +1,44 @@
+- hosts: test
+  gather_facts: true
+
+  tasks:
+
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /usr/local/bin/monitoring
+        state: directory
+        mode: '0755'
+      become: yes
+      become_user: root
+      become_method: sudo
+     
+    - name: Copy docker-compose file file to client
+      ansible.builtin.copy:
+        src: "configs/docker-compose.yaml"
+        dest: "/usr/local/bin/monitoring/docker-compose.yaml"
+        owner: root
+        mode: 0644
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Copy prometheus config files to client
+      ansible.builtin.copy:
+        src: "configs/prometheus.yml"
+        dest: "/usr/local/bin/monitoring/prometheus.yml"
+        owner: root
+        mode: 0644
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Copy config files to client
+      ansible.builtin.copy:
+        src: "configs/grafana"
+        dest: "/usr/local/bin/monitoring/grafana"
+        owner: root
+        mode: 0644
+      become: yes
+      become_user: root
+      become_method: sudo
+
