@@ -1,15 +1,9 @@
 # vps-configuration
-server management resources
+
+Server management resources for resources that cant be managed/boot-strapped via Cloud-Init.
 
 
-## Hetzner
-
-- [Management Console](https://robot.hetzner.com/server) - Credentials are in bitwarden
-
-- IP: 176.9.44.19
-
-
-## Run ansible playbook
+## How to run the ansible playbooks
 
 - Log in to bitwarden cli
 - Unlock the vault
@@ -43,7 +37,7 @@ docker run --platform linux/amd64 -it \
 ## Playbooks
 
 1. main-playbook.yaml
-  - setus up users, ssh keys, basic apt packagaes, apt-update/upgrade, fail2ban jails, and uses scrap-metal to set the cpu to performance mode
+  - setus up users, ssh keys, basic apt packagaes, apt-update/upgrade, fail2ban jails, prometheus node-exporter, and uses scrap-metal to set the cpu to performance mode
   
 2. brew_install.yaml
   - clones the brew repo, installs it and sets the env vars correctly
@@ -51,7 +45,21 @@ docker run --platform linux/amd64 -it \
 3. firewall
   - parses approved-ips.yaml and adds those items to a uwf firewall
 
-4. 
+4. monitoring-playbook
+  - sets up a prometheus and grafana server using docker-compose on the target system
+
+## Hosts
+
+### Hetzner
+
+- [Management Console](https://robot.hetzner.com/server) - Credentials are in bitwarden
+
+- IP: 176.9.44.19
+
+### Local Metal
+
+- IP: 192.168.50.100
+
 ## Specs
 
 ```bash
