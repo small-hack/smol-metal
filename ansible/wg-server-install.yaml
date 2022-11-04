@@ -1,8 +1,6 @@
-- hosts: hetzner
+- hosts: wireguard-server
   gather_facts: yes
   vars:
-    server_private_key: "{{ lookup('file', '{{ playbook_dir}}/wg_server_keys/privatekey' ) }}"
-    server_public_key: "{{ lookup('file', '{{ playbook_dir }}/wg_server_keys/publickey' ) }}"
     ips: "{{ lookup('file', '{{ playbook_dir }}/ips.yaml' ) | from_yaml }}"
 
   tasks:
@@ -143,7 +141,7 @@
       become_user: root
       become_method: sudo
 
-    - name: save the server's public ip address to file
+    - name: save the server public ip address to file
       shell: |
         echo '{{ ansible_default_ipv4.address }}' > /tmp/ip-address
 
