@@ -14,7 +14,7 @@ This repo can manage your:
 - Log Aggregation via Loki (WiP)
 - Dashboards via Grafana
 
-## Reasources
+## Resources
 
 - [Wireguard - the Fast, Modern, Secure VPN Tunnel](https://www.wireguard.com/)
 - [How To Set Up WireGuard on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-set-up-wireguard-on-ubuntu-20-04)
