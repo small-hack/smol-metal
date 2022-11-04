@@ -1,6 +1,6 @@
 The Clear BSD License
 
-Copyright (c) 2022 Max Roby
+Copyright (c) 2022 Cloudymax
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
