@@ -1,4 +1,4 @@
-- hosts: hetzner
+- hosts: all
   gather_facts: yes
   vars:
     approved_ips: "{{ lookup('file', 'configs/approved-ips.yaml' ) | from_yaml }}"
