@@ -1,6 +1,6 @@
 - hosts: all
   gather_facts: true
-  vars: 
+  vars:
     admin_password: "{{ admin_password }}"
 
   tasks:
@@ -19,7 +19,7 @@
 
     - name: manage user accounts
       user:
-        name: admin
+        name: cloudymax
         shell: /bin/bash
         groups: [ sudo, adm, docker ]
         append: no
@@ -33,16 +33,10 @@
       become_user: root
       become_method: sudo
 
-    - name: Deploy SSH Key to the user
-      ansible.builtin.shell: /usr/bin/ssh-import-id-gh cloudymax
-      become: true
-      become_user: max
-      become_method: sudo
-         
     - name: Add system user to the sudoers group
       copy:
         dest: "/etc/sudoers.d/admin"
-        content: "admin  ALL=(ALL)  NOPASSWD: ALL"
+        content: "cloudymax  ALL=(ALL)  NOPASSWD: ALL"
       become: true
       become_user: root
       become_method: sudo
@@ -66,6 +60,24 @@
       become_user: root
       become_method: sudo
 
+    - name: install ssh-import-id
+      apt:
+        name: ssh-import-id
+        state: present
+        install_recommends: yes
+        autoclean: yes
+        allow_unauthenticated: yes
+        force_apt_get: yes
+      become: true
+      become_user: root
+      become_method: sudo
+
+    - name: Deploy SSH Key to the user
+      ansible.builtin.shell: /usr/bin/ssh-import-id-gh cloudymax
+      become: true
+      become_user: cloudymax
+      become_method: sudo
+ 
     - name: install fail2ban
       apt:
         name: fail2ban
