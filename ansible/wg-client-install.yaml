@@ -26,7 +26,7 @@
     set_fact:
       server_public_key: "{{ server_public_key }}"
 
-- hosts: bradley
+- hosts: wireguard-client
   gather_facts: yes
   serial: 1
   vars:
@@ -162,7 +162,7 @@
       become_user: root
       become_method: sudo
 
-- hosts: hetzner
+- hosts: wireguard-server
   gather_facts: yes
   vars:
     ips: "{{ lookup('file', '{{ playbook_dir }}/ips.yaml' ) | from_yaml }}"
