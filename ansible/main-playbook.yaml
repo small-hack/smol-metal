@@ -1,19 +1,14 @@
 - hosts: all
   gather_facts: true
   vars: 
-    max_password: "{{ max_password }}"
-    jesse_password: "{{ jesse_password }}"
+    admin_password: "{{ max_password }}"
 
 
   tasks:
 
     - name: setting the user password as fact
       set_fact:
-        max_password: "{{ max_password }}"
-
-    - name: setting the user password as fact
-      set_fact:
-        jesse_password: "{{ jesse_password }}"
+        admin_password: "{{ admin_password }}"
 
     - name: Ensure group "docker" exists
       ansible.builtin.group:
@@ -25,34 +20,18 @@
 
     - name: manage user accounts
       user:
-        name: max
+        name: admin
         shell: /bin/bash
         groups: [ sudo, adm, docker ]
         append: no
         create_home: yes
         generate_ssh_key: no
-        #password: "{{ max_password }}"
+        password: "{{ admin_password }}"
         state: present
         system: no
         force: yes
       become: true
       become_user: root
-      become_method: sudo
-
-    - name: manage the user account
-      user:
-        name: jesse
-        shell: /bin/bash
-        groups:  [ sudo, adm, docker ]
-        append: no
-        create_home: yes
-        generate_ssh_key: no
-        password: "{{ jesse_password }}"
-        state: present
-        system: no
-        force: yes
-      become: yes
-      become_user: root 
       become_method: sudo
 
     - name: Deploy SSH Key to the user
@@ -60,35 +39,14 @@
       become: true
       become_user: max
       become_method: sudo
-
-    - name: Deploy SSH Key to the user
-      ansible.builtin.shell: /usr/bin/ssh-import-id-gh cloudymax
-      become: true
-      become_user: root
-      become_method: sudo
- 
-    - name: Deploy SSH Key to the user
-      ansible.builtin.shell: /usr/bin/ssh-import-id-gh jessebot
-      become: true
-      become_user: jesse
-      become_method: sudo
          
     - name: Add system user to the sudoers group
       copy:
-        dest: "/etc/sudoers.d/max"
-        content: "max  ALL=(ALL)  NOPASSWD: ALL"
+        dest: "/etc/sudoers.d/admin"
+        content: "admin  ALL=(ALL)  NOPASSWD: ALL"
       become: true
       become_user: root
       become_method: sudo
-
-    - name: Add system user to the sudoers group
-      copy:
-        dest: "/etc/sudoers.d/jesse"
-        content: "jesse  ALL=(ALL)  NOPASSWD: ALL"
-      become: true
-      become_user: root
-      become_method: sudo
-
 
     - name: Run the equivalent of "apt-get update"
       ansible.builtin.apt:
