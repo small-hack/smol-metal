@@ -106,20 +106,6 @@
       become_user: root
       become_method: sudo
 
-    - name: clone scrap metal
-      ansible.builtin.git:
-        repo: https://www.github.com/cloudymax/Scrap-Metal.git
-        dest: /Scrap-Metal
-      become: true
-      become_user: root
-      become_method: sudo
-
-    - name: Set Governor
-      ansible.builtin.shell: /Scrap-Metal/virtual-machines/host-config-resources/governor.sh set_all_cores performance
-      become: true
-      become_user: root
-      become_method: sudo
-
     - name: install apt packages
       apt:
         name: curl, wget, unzip, python3-pip, docker.io, docker-compose
