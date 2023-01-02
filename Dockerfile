@@ -12,8 +12,6 @@ RUN mkdir -p /ansible \
   && ln -s /usr/bin/python3 python \
   && rm -rf /var/lib/apt/lists/*
 
-#USER ansible
-
 RUN pip3 --no-cache-dir install --upgrade pip \
   && pip3 install ansible-core ansible-cmdb \
   && pip3 install --user ansible ara
