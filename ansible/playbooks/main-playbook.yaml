@@ -1,13 +1,18 @@
+---
 - hosts: all
   gather_facts: true
-  vars:
-    admin_password: "{{ admin_password }}"
-
   tasks:
 
-    - name: setting the user password as fact
-      set_fact:
-        admin_password: "{{ admin_password }}"
+    - name: install sudo
+      apt:
+        name: sudo
+        state: present
+        install_recommends: true
+        autoclean: true
+        allow_unauthenticated: true
+        force_apt_get: true
+      become: true
+      become_user: root
 
     - name: Ensure group "docker" exists
       ansible.builtin.group:
@@ -15,157 +20,111 @@
         state: present
       become: true
       become_user: root
-      become_method: sudo
 
     - name: manage user accounts
       user:
-        name: cloudymax
+        name: friend
         shell: /bin/bash
-        groups: [ sudo, adm, docker ]
-        append: no
-        create_home: yes
-        generate_ssh_key: no
+        groups: [sudo, adm, docker]
+        append: false
+        create_home: true
+        generate_ssh_key: false
         password: "{{ admin_password }}"
         state: present
-        system: no
-        force: yes
+        system: false
+        force: true
       become: true
       become_user: root
-      become_method: sudo
 
     - name: Add system user to the sudoers group
       copy:
         dest: "/etc/sudoers.d/admin"
-        content: "cloudymax  ALL=(ALL)  NOPASSWD: ALL"
+        content: "friend  ALL=(ALL)  NOPASSWD: ALL"
       become: true
       become_user: root
-      become_method: sudo
 
     - name: Run the equivalent of "apt-get update"
       ansible.builtin.apt:
         update_cache: true
-        autoclean: yes
-        allow_unauthenticated: yes
-        force_apt_get: yes
+        autoclean: true
+        allow_unauthenticated: true
+        force_apt_get: true
       become: true
       become_user: root
-      become_method: sudo
 
     - name: Run the equivalent of "apt-get upgrade"
       apt:
-        upgrade: yes
-        update_cache: yes
+        upgrade: true
+        update_cache: true
         cache_valid_time: 0
       become: true
       become_user: root
-      become_method: sudo
 
     - name: install ssh-import-id
       apt:
         name: ssh-import-id
         state: present
-        install_recommends: yes
-        autoclean: yes
-        allow_unauthenticated: yes
-        force_apt_get: yes
+        install_recommends: true
+        autoclean: true
+        allow_unauthenticated: true
+        force_apt_get: true
       become: true
       become_user: root
-      become_method: sudo
 
     - name: Deploy SSH Key to the user
-      ansible.builtin.shell: /usr/bin/ssh-import-id-gh cloudymax
+      ansible.builtin.shell: /usr/bin/ssh-import-id-gh cloudymax jessebot
       become: true
-      become_user: cloudymax
-      become_method: sudo
- 
-    - name: install fail2ban
-      apt:
-        name: fail2ban
-        state: present
-        install_recommends: yes
-        autoclean: yes
-        allow_unauthenticated: yes
-        force_apt_get: yes
-      become: true
-      become_user: root
-      become_method: sudo
-
-    - name: Copy fail2ban jail file to client
-      ansible.builtin.copy:
-        src: "configs/jail.local"
-        dest: "/etc/fail2ban/jail.local"
-        owner: root
-        mode: 0644
-      become: true
-      become_user: root
-      become_method: sudo
-
-    - name: start fail2ban
-      ansible.builtin.shell: /usr/bin/fail2ban-client start || true
-      become: true
-      become_user: root
-      become_method: sudo
+      become_user: friend
 
     - name: install apt packages
       apt:
-        name: curl, wget, unzip, python3-pip, docker.io, docker-compose
+        name: sudo, curl, git, wget, unzip, python3-pip
         state: present
-        install_recommends: yes
-        autoclean: yes
-        allow_unauthenticated: yes
-        force_apt_get: yes
+        install_recommends: true
+        autoclean: true
+        allow_unauthenticated: true
+        force_apt_get: true
       become: true
       become_user: root
-      become_method: sudo
 
     - name: download prometheus node exporter
-      ansible.builtin.get_url: 
+      ansible.builtin.get_url:
         url: https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz
         dest: /node_exporter-1.4.0.linux-amd64.tar.gz
       become: true
       become_user: root
-      become_method: sudo
 
     - name: extract prometheus archive
       ansible.builtin.unarchive:
         src: /node_exporter-1.4.0.linux-amd64.tar.gz
         dest: /
-        remote_src: yes
+        remote_src: true
       become: true
       become_user: root
-      become_method: sudo
 
     - name: Move prometheus node exporter binary to final location
       command: mv /node_exporter-1.4.0.linux-amd64/node_exporter /usr/local/bin/node_exporter
       become: true
       become_user: root
-      become_method: sudo
 
     - name: Copy prometheus node exporter service file to client
-      ansible.builtin.copy:
-        src: "configs/node_exporter.service"
-        dest: "/etc/systemd/system/node_exporter.service"
-        owner: root
-        mode: 0744
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/small-hack/smol-vps-config/main/ansible/configs/node_exporter.service
+        dest: /etc/systemd/system/node_exporter.service
       become: true
       become_user: root
-      become_method: sudo
-  
+
     - name: reload systemd daemon since we added a new service file
       ansible.builtin.shell: systemctl daemon-reload
       become: true
       become_user: root
-      become_method: sudo
- 
+
     - name: enable node exporter service
       ansible.builtin.shell: systemctl enable node_exporter.service
       become: true
       become_user: root
-      become_method: sudo
-  
+
     - name: start node exporter service
       ansible.builtin.shell: systemctl start node_exporter.service
       become: true
       become_user: root
-      become_method: sudo
- 

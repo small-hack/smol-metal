@@ -1,0 +1,84 @@
+---
+- hosts: all
+  gather_facts: true
+
+  environment:
+    PATH: /home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin
+
+  tasks:
+
+    - name: install brew packages
+      ansible.builtin.shell: /home/linuxbrew/.linuxbrew/bin/brew install python@3.11
+      become: true
+      become_user: friend
+
+    - name: downloading onboardme setup
+      get_url:
+        url: https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
+        dest: "/home/friend/setup.sh"
+      become: true
+      become_user: friend
+
+    - name: change onboardme installer permissions
+      ansible.builtin.shell: chmod +x /home/friend/install.sh
+      become: true
+      become_user: root
+
+    - name: run onboardme setup
+      ansible.builtin.shell: yes |. ./setup.sh
+      args:
+        chdir: /home/friend/
+      become: true
+      become_user: friend
+
+    - name: install onboardme
+      ansible.builtin.pip:
+        name: onboardme
+        executable: pip3.11
+        state: present
+        extra_args: --upgrade
+
+    - name: run onboardme dot files
+      ansible.builtin.shell: onboardme -O -s dot_files -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme brew packages
+      ansible.builtin.shell: onboardme -O -s packages -p brew -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme apt packages
+      ansible.builtin.shell: onboardme -O -s packages -p apt -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme snap packages
+      ansible.builtin.shell: onboardme -O -s packages -p snap -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme flatpak packages
+      ansible.builtin.shell: onboardme -O -s packages -p flatpak -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme fonts
+      ansible.builtin.shell: onboardme -O -s font_setup -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme vim files
+      ansible.builtin.shell: onboardme -O -s vim_setup -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme nvim files
+      ansible.builtin.shell: onboardme -O -s neovim_setup -l debug
+      become: true
+      become_user: friend
+
+    - name: run onboardme group setup
+      ansible.builtin.shell: onboardme -O -s group_setup -l debug
+      become: true
+      become_user: friend

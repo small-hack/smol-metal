@@ -1,3 +1,4 @@
+---
 - hosts: test
   gather_facts: true
 
@@ -8,17 +9,17 @@
         path: /usr/local/bin/monitoring
         state: directory
         mode: '0755'
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
-     
+
     - name: Copy docker-compose file file to client
       ansible.builtin.copy:
         src: "configs/docker-compose.yaml"
         dest: "/usr/local/bin/monitoring/docker-compose.yaml"
         owner: root
         mode: 0644
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
@@ -28,7 +29,7 @@
         dest: "/usr/local/bin/monitoring/prometheus.yml"
         owner: root
         mode: 0644
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
 
@@ -38,7 +39,6 @@
         dest: "/usr/local/bin/monitoring/grafana"
         owner: root
         mode: 0644
-      become: yes
+      become: true
       become_user: root
       become_method: sudo
-

@@ -2,18 +2,6 @@
 
 Some Ansible server-management helpers for resources that cant be managed/boot-strapped via Cloud-Init.
 
-This repo can manage your:
-
-- Wireguard VPN client/server install
-- Firewall Rules via UFW
-- Intrusion prevention via Fail2Ban
-- Users accounts, passwords, and ssh-keys
-- Apt and Brew packaages
-- Metrics exporting from Prometheus
-- Log exporting from Promtail (WiP)
-- Log Aggregation via Loki (WiP)
-- Dashboards via Grafana
-
 ## Resources
 
 - [Wireguard - the Fast, Modern, Secure VPN Tunnel](https://www.wireguard.com/)
@@ -29,63 +17,85 @@ This repo can manage your:
 - [Loki Install](https://grafana.com/docs/loki/latest/installation/?pg=oss-loki&plcmt=resources)
 - [Install Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/)
 
-## ToDo:
+## Pre-flight checks for Debian on Bare-Metal
 
-- make prometheus scrape targets populate from a list
-- add some choice prometheus alert rules
-- get alert manager working w/ slack & discord
-- add some provisioned data-sources for grafana
-- add some provisioned dashboards for the node exporter
-- add Loki for log aggregation
-- add promtail for log exporting
-- add SSL to prometheus node exporter
+We want to do all this over wireguard and since we dont have an automated
+debian install we need to prep the system for use with ansible manually.
+
+- Need a user with passwordless sudo
+- need ssh key imported
+- need wireguard setup (get keys from bitwarden)
+- need sudo installed
+
+```bash
+
+su
+
+cat > /etc/apt/sources.list
+deb http://deb.debian.org/debian bookworm main contrib non-free
+deb-src http://deb.debian.org/debian bookworm main contrib non-free
+
+deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+
+deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+
+# press enter, then ctrl + d
+
+apt-get update
+
+apt-get install wireguard ssh-import-id sudo
+
+echo "max ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+ssh-import-id-gh cloudymax
+
+sudo nano /etc/wireguard/wg0.conf
+
+sudo systemctl enable wg-quick@wg0
+
+sudo systemctl restart wg-quick@wg0
+
+sudo wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/cloudymax/linux_notes/main/sshd_config
+
+sudo systemctl reload sshd
+
+```
 
 ## How to run the ansible playbooks
 
-- Log in to bitwarden cli
-- Unlock the vault
-- Get the user-name and password from bitwarden
+- populate ansible/inventory
+
+- Run the playbook
 
 ```bash
-bw get username hetzner-vps
-bw get password hetzner-vps
-```
+# Create a directory for a volume to store settings and a sqlite database
+mkdir -p ~/.ara/server
 
-- populate ansible/inventory 
+# Start an API server with docker from the image on DockerHub:
+docker run --name api-server --detach --tty \
+  --volume ~/.ara/server:/opt/ara -p 8000:8000 \
+  docker.io/recordsansible/ara-api:latest
 
-- encrypt the inventory file
+# build the runner
+docker build -t ansible-runner .
 
-- create and populate ansible/.vault_pass
-
-- add users you want to manage to the main-playbook.yaml
-
-- pass the user's names and passwords as extravars (example below)
-
-- Run the playbook 
-
-```bash
+# Run a playbook
 docker run --platform linux/amd64 -it \
   -v $(pwd)/ansible:/ansible \
-  -w /ansible \
-  runner ansible-playbook main-playbook.yaml \
-  -i inventory.yaml \
-  --extra-vars \
-  "user0_password='$(bw get password user0)' \
-   user1_password='$(bw get password user1)'"
-
+  docker run -it -v $(pwd)/ansible:/ansible \
+  ansible-runner ansible-playbook playbooks/install_onboardme.yaml \
+  -i sample-inventory.yaml
 ```
 
 ## Playbooks
 
 1. main-playbook.yaml
-  - setus up users, ssh keys, basic apt packagaes, apt-update/upgrade, fail2ban jails, prometheus node-exporter, and uses scrap-metal to set the cpu to performance mode
-  
-2. brew_install.yaml
+  - setus up users, ssh keys, basic apt packagaes, apt-update/upgrade prometheus node-exporter
+
+2. install_brew.yaml
   - clones the brew repo, installs it and sets the env vars correctly
-  
-3. firewall
-  - parses approved-ips.yaml and adds those items to a uwf firewall
 
-4. monitoring-playbook
-  - sets up a prometheus and grafana server using docker-compose on the target system
-
+3. install_onboardme.yaml
+  - installs onboardme

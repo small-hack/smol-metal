@@ -6,3 +6,4 @@ ansible/ansible.log
 ansible/wg
 ansible/wg_server_keys
 ansible/max
+ansible/id_rsa

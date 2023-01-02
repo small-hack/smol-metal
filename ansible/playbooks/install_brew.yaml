@@ -1,0 +1,40 @@
+---
+- hosts: all
+  gather_facts: true
+
+  tasks:
+
+    - name: downloading brew repo
+      get_url:
+        url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        dest: "/home/friend/install.sh"
+      become: true
+      become_user: friend
+
+    - name: change homebrew permissions
+      ansible.builtin.shell: chmod +x /home/friend/install.sh
+      become: true
+      become_user: root
+
+    - name: change ownership
+      ansible.builtin.shell: chmod 777 /home/friend/install.sh
+      become: true
+      become_user: root
+
+    - name: install brew
+      ansible.builtin.shell: NONINTERACTIVE=1 /bin/bash /home/friend/install.sh
+      become: true
+      become_user: friend
+
+    - name: create friend's .profile
+      ansible.builtin.shell: touch /home/friend/.profile
+      become: true
+      become_user: root
+
+    - name: add to friends's path
+      ansible.builtin.lineinfile:
+        path: /home/friend/.profile
+        create: true
+        line: 'export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"'
+      become: true
+      become_user: friend
