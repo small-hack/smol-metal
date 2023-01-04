@@ -22,16 +22,10 @@ Some Ansible server-management helpers for resources that cant be managed/boot-s
 We want to do all this over wireguard and since we dont have an automated
 debian install we need to prep the system for use with ansible manually.
 
-- Need a user with passwordless sudo
-- need ssh key imported
-- need wireguard setup (get keys from bitwarden)
-- need sudo installed
+## As Sudo:
 
 ```bash
-
-su
-
-cat > /etc/apt/sources.list
+cat << EOF | /etc/apt/sources.list
 deb http://deb.debian.org/debian bookworm main contrib non-free
 deb-src http://deb.debian.org/debian bookworm main contrib non-free
 
@@ -40,27 +34,49 @@ deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib no
 
 deb http://deb.debian.org/debian bookworm-updates main contrib non-free
 deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+EOF
+```
 
-# press enter, then ctrl + d
+```bash
+# Package Choice Justifications
+# sudo - a user with passwordless sudo for automations
+# ssh-import-id - ssh key imports
+# wireguard - setup vpn (get keys from bitwarden)
+# curl - for onboardme
+# nvidia-driver firmware-misc-nonfree linux-headers-amd64 are for GPU
 
-apt-get update
+apt-get update && apt-get install -y wireguard \
+  ssh-import-id \
+  sudo \
+  curl \
+  nvidia-driver \
+  firmware-misc-nonfree \
+  linux-headers-amd64
+```
 
-apt-get install wireguard ssh-import-id sudo
+```bash
+echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+```
 
-echo "max ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+## As User:
+
+```bash
 ssh-import-id-gh cloudymax
+```
 
+```bash
 sudo nano /etc/wireguard/wg0.conf
 
 sudo systemctl enable wg-quick@wg0
 
 sudo systemctl restart wg-quick@wg0
+```
 
+```bash
 sudo wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/cloudymax/linux_notes/main/sshd_config
 
 sudo systemctl reload sshd
-
 ```
 
 ## How to run the ansible playbooks
