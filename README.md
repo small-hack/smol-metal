@@ -1,4 +1,4 @@
-# VPS-Configuration
+# Server-Configuration
 
 Some Ansible server-management helpers for resources that cant be managed/boot-strapped via Cloud-Init.
 
@@ -24,8 +24,10 @@ debian install we need to prep the system for use with ansible manually.
 
 ## As Sudo:
 
+1. Fix apt sources
+
 ```bash
-cat << EOF | /etc/apt/sources.list
+cat << EOF > /etc/apt/sources.list
 deb http://deb.debian.org/debian bookworm main contrib non-free
 deb-src http://deb.debian.org/debian bookworm main contrib non-free
 
@@ -36,6 +38,8 @@ deb http://deb.debian.org/debian bookworm-updates main contrib non-free
 deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
 EOF
 ```
+
+2. install deps
 
 ```bash
 # Package Choice Justifications
@@ -56,12 +60,15 @@ apt-get update && apt-get install -y wireguard \
   netplan.io
 ```
 
+3. add passwordless sudo
 ```bash
 echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ```
 
+4. bridge the network adapter
+
 ```bash
-cat << EOF | /etc/netplan/99-bridge.yaml
+cat << EOF > /etc/netplan/99-bridge.yaml
 network:
   bridges:
     br0:
@@ -85,19 +92,24 @@ network:
   renderer: networkd
   version: 2
 EOF
+
+sudo netplan --debug generate
+sudo netplan --debug apply
 ```
 
+5. Set grub to enable iommu
+
 ```bash
+cat << EOF > /tmp/grub
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=5
 GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
 GRUB_CMDLINE_LINUX_DEFAULT="quiet preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on"
 GRUB_CMDLINE_LINUX=""
-```
+EOF
 
-```bash
-sudo netplan --debug generate
-sudo netplan --debug apply
+sudo mv /tmp/grub /etc/default/grub
+sudo update-grub
 ```
 
 ## As User:
