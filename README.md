@@ -57,7 +57,8 @@ apt-get update && apt-get install -y wireguard \
   firmware-misc-nonfree \
   linux-headers-amd64 \
   docker.io \
-  netplan.io
+  netplan.io \
+  git-extras
 ```
 
 3. add passwordless sudo
