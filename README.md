@@ -68,7 +68,7 @@ echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 4. bridge the network adapter
 
 ```bash
-cat << EOF > /etc/netplan/99-bridge.yaml
+# /etc/netplan/99-bridge.yaml
 network:
   bridges:
     br0:
@@ -91,7 +91,6 @@ network:
       dhcp6: no
   renderer: networkd
   version: 2
-EOF
 
 sudo netplan --debug generate
 sudo netplan --debug apply
@@ -100,15 +99,13 @@ sudo netplan --debug apply
 5. Set grub to enable iommu
 
 ```bash
-cat << EOF > /tmp/grub
+# /etc/default/grub
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=5
 GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
 GRUB_CMDLINE_LINUX_DEFAULT="quiet preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on"
 GRUB_CMDLINE_LINUX=""
-EOF
 
-sudo mv /tmp/grub /etc/default/grub
 sudo update-grub
 ```
 
