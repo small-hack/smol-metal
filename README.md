@@ -94,7 +94,13 @@ sudo reboot now
 
 6. Enable GPU passthrough (Optional) 
 
+See: https://github.com/small-hack/smol-gpu-passthrough
+
 ```bash
+wget https://raw.githubusercontent.com/small-hack/smol-gpu-passthrough/main/setup.sh
+
+bash setup.sh full_run NVIDIA
+sudo reboot now
 ```
 
 ## As User:
