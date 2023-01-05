@@ -51,13 +51,54 @@ apt-get update && apt-get install -y wireguard \
   curl \
   nvidia-driver \
   firmware-misc-nonfree \
-  linux-headers-amd64
+  linux-headers-amd64 \
+  docker.io \
+  netplan.io
 ```
 
 ```bash
 echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ```
 
+```bash
+cat << EOF | /etc/netplan/99-bridge.yaml
+network:
+  bridges:
+    br0:
+      dhcp4: no
+      dhcp6: no
+      interfaces: [enp4s0]
+      addresses: [192.168.50.101/24]
+      routes:
+        - to: default
+          via: 192.168.50.1
+      mtu: 1500
+      nameservers:
+        addresses: [192.168.50.50]
+      parameters:
+        stp: true
+        forward-delay: 4
+  ethernets:
+    enp4s0:
+      dhcp4: no
+      dhcp6: no
+  renderer: networkd
+  version: 2
+EOF
+```
+
+```bash
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
+GRUB_CMDLINE_LINUX_DEFAULT="quiet preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on"
+GRUB_CMDLINE_LINUX=""
+```
+
+```bash
+sudo netplan --debug generate
+sudo netplan --debug apply
+```
 
 ## As User:
 
