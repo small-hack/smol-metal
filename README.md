@@ -108,6 +108,12 @@ GRUB_CMDLINE_LINUX_DEFAULT="quiet preempt=voluntary iommu=pt amd_iommu=on intel_
 GRUB_CMDLINE_LINUX=""
 
 sudo update-grub
+sudo reboot now
+```
+
+6. Enable GPU passthrough (Optional) 
+
+```bash
 ```
 
 ## As User:
