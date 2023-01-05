@@ -1,21 +1,7 @@
-# Server-Configuration
+# Smol-Metal
 
-Some Ansible server-management helpers for resources that cant be managed/boot-strapped via Cloud-Init.
+Notes for configuring Debian Bookworm nodes for use as VPS hosts.
 
-## Resources
-
-- [Wireguard - the Fast, Modern, Secure VPN Tunnel](https://www.wireguard.com/)
-- [How To Set Up WireGuard on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-set-up-wireguard-on-ubuntu-20-04)
-- [How To Set Up a Firewall with UFW on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-22-04)
-- [UFW Essentials: Common Firewall Rules and Commands](https://www.digitalocean.com/community/tutorials/ufw-essentials-common-firewall-rules-and-commands)
-- [Fail2ban Wiki](https://github.com/fail2ban/fail2ban/wiki)
-- [How To Protect SSH with Fail2Ban on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-22-04)
-- [Importing user SSH keys from Github](https://github.com/dustinkirkland/ssh-import-id)
-- [Hashing passwords for use with cloud-init](https://cloudinit.readthedocs.io/en/latest/topics/examples.html)
-- [Setting up Prometheus node exporter](https://prometheus.io/docs/guides/node-exporter/)
-- [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/)
-- [Loki Install](https://grafana.com/docs/loki/latest/installation/?pg=oss-loki&plcmt=resources)
-- [Install Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/)
 
 ## Pre-flight checks for Debian on Bare-Metal
 
