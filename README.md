@@ -1,12 +1,7 @@
 # Smol-Metal
 
 Notes for configuring Debian Bookworm nodes for use as VPS hosts.
-
-
-## Pre-flight checks for Debian on Bare-Metal
-
-We want to do all this over wireguard and since we dont have an automated
-debian install we need to prep the system for use with ansible manually.
+The steps below setup the system to be further controlled by ansible. Eventually most of this will move into a cloid-init or pre-seed files.
 
 ## As Sudo:
 
