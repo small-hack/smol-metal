@@ -50,6 +50,13 @@ echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 4. bridge the network adapter
 
+https://wiki.debian.org/NetworkInterfaceNames
+
+/etc/udev/rules.d/70-persistent-net.rules
+```bash
+
+```
+
 ```bash
 # /etc/netplan/99-bridge.yaml
 network:
