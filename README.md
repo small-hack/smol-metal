@@ -34,9 +34,9 @@ apt-get update && apt-get install -y wireguard \
   ssh-import-id \
   sudo \
   curl \
-  nvidia-driver \
-  firmware-misc-nonfree \
-  linux-headers-amd64 \
+  #nvidia-driver \
+  #firmware-misc-nonfree \
+  #linux-headers-amd64 \
   docker.io \
   netplan.io \
   git-extras \
