@@ -34,13 +34,15 @@ apt-get update && apt-get install -y wireguard \
   ssh-import-id \
   sudo \
   curl \
-  #nvidia-driver \
-  #firmware-misc-nonfree \
-  #linux-headers-amd64 \
+  netplan.io \
   docker.io \
   netplan.io \
   git-extras \
   rsyslog
+  # don't install if enabling iommu-passthrough
+  #nvidia-driver \
+  #firmware-misc-nonfree \
+  #linux-headers-amd64 \
 ```
 
 3. add passwordless sudo
