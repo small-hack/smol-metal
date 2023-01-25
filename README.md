@@ -50,6 +50,11 @@ apt-get update && apt-get install -y wireguard \
 echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ```
 
+Add user to docker group
+```bash
+usermod -a -G docker friend
+```
+
 4. bridge the network adapter
 
 https://wiki.debian.org/NetworkInterfaceNames
