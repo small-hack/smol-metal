@@ -38,7 +38,6 @@ apt-get update && apt-get install -y wireguard \
   docker.io \
   netplan.io \
   git-extras \
-  wireguard \
   rsyslog
   # don't install if enabling iommu-passthrough
   #nvidia-driver \
