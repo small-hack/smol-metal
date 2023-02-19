@@ -40,11 +40,11 @@ apt-get update && apt-get install -y wireguard \
   git-extras \
   rsyslog
   
-  # Do not install on any host that will need to pass a gpu to a guest
-  # This will wreck the vfio setup
-  sudo apt-get install -y nvidia-driver \
+# Do not install on any host that will need to pass a gpu to a guest
+# This will wreck the vfio setup
+sudo apt-get install -y nvidia-driver \
   firmware-misc-nonfree \
-  linux-headers-amd64 \
+  linux-headers-amd64
 ```
 
 3. add passwordless sudo
