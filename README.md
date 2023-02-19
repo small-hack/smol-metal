@@ -39,10 +39,12 @@ apt-get update && apt-get install -y wireguard \
   netplan.io \
   git-extras \
   rsyslog
-  # don't install if enabling iommu-passthrough
-  #nvidia-driver \
-  #firmware-misc-nonfree \
-  #linux-headers-amd64 \
+  
+  # Do not install on any host that will need to pass a gpu to a guest
+  # This will wreck the vfio setup
+  sudo apt-get install -y nvidia-driver \
+  firmware-misc-nonfree \
+  linux-headers-amd64 \
 ```
 
 3. add passwordless sudo
