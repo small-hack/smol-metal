@@ -38,7 +38,8 @@ apt-get update && apt-get install -y wireguard \
   docker.io \
   netplan.io \
   git-extras \
-  rsyslog
+  rsyslog \
+  gpg
   
 # Do not install on any host that will need to pass a gpu to a guest
 # This will wreck the vfio setup
