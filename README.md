@@ -45,7 +45,8 @@ apt-get update && apt-get install -y wireguard \
 # This will wreck the vfio setup
 apt-get install -y nvidia-driver \
   firmware-misc-nonfree \
-  linux-headers-amd64
+  linux-headers-amd64 \
+  linux-headers-`uname -r`
 ```
 
 3. add passwordless sudo
