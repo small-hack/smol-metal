@@ -43,10 +43,15 @@ apt-get update && apt-get install -y wireguard \
   
 # Do not install on any host that will need to pass a gpu to a guest
 # This will wreck the vfio setup
+# Debain
 apt-get install -y nvidia-driver \
   firmware-misc-nonfree \
   linux-headers-amd64 \
   linux-headers-`uname -r`
+
+# For Ubuntu follow this guide https://www.tecmint.com/install-kernel-headers-in-ubuntu-and-debian/
+# then download your drivers from here https://www.nvidia.com/download/index.aspx?lang=en-us
+# Ubuntu's normal installer is broken right now so ubuntu-drivers autoinstall will fail on most systems
 ```
 
 3. setup user
