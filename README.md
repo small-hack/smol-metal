@@ -162,6 +162,8 @@ sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
 
+For cuda driveers go here: https://developer.nvidia.com/cuda-downloads
+
 Test with:
 
 ```bash
