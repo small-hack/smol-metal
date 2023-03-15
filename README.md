@@ -49,9 +49,11 @@ apt-get install -y nvidia-driver \
   linux-headers-`uname -r`
 ```
 
-3. add passwordless sudo
+3. setup user
 ```bash
+useradd -s /bin/bash -d /home/friend/ -m -G sudo friend docker
 echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+sudo -u friend ssh-import-id-gh cloudymax
 ```
 
 Add user to docker group
@@ -123,10 +125,6 @@ sudo reboot now
 ```
 
 ## As User:
-
-```bash
-ssh-import-id-gh cloudymax
-```
 
 ```bash
 sudo nano /etc/wireguard/wg0.conf
