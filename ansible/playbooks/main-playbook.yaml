@@ -21,7 +21,7 @@
       become: true
       become_user: root
 
-    - name: manage user accounts
+    - name: create the admin user account
       user:
         name: friend
         shell: /bin/bash
@@ -36,7 +36,7 @@
       become: true
       become_user: root
 
-    - name: Add system user to the sudoers group
+    - name: Add admin user to the sudoers group
       copy:
         dest: "/etc/sudoers.d/admin"
         content: "friend  ALL=(ALL)  NOPASSWD: ALL"
