@@ -186,6 +186,7 @@ mkdir -p ~/.ara/server
 # Start an API server with docker from the image on DockerHub:
 docker run --name api-server --detach --tty \
   --volume ~/.ara/server:/opt/ara -p 8000:8000 \
+  -e ARA_ALLOWED_HOSTS="['*']" \
   docker.io/recordsansible/ara-api:latest
 
 # build the runner
@@ -194,8 +195,9 @@ docker build -t ansible-runner .
 # Run a playbook
 docker run --platform linux/amd64 -it \
   -v $(pwd)/ansible:/ansible \
-  docker run -it -v $(pwd)/ansible:/ansible \
-  ansible-runner ansible-playbook playbooks/install_onboardme.yaml \
+  -e ARA_API_SERVER="http://192.168.50.100:8000" \
+  -e ARA_API_CLIENT=http \
+  ansible-runner ansible-playbook playbooks/main-playbook.yaml \
   -i sample-inventory.yaml
 ```
 
