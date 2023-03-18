@@ -22,6 +22,8 @@ time bash vm.sh create-cloud-vm test
 docker run --platform linux/amd64 -it \
   -v $(pwd)/ansible:/ansible \
   -v $(pwd)/test/friend:/id_rsa \
+  -e ARA_API_SERVER="http://192.168.50.100:8000" \
+  -e ARA_API_CLIENT=http \
   ansible-runner ansible-playbook playbooks/main-playbook.yaml \
   -i sample-inventory.yaml \
   --extra-vars="admin_password=password" \
