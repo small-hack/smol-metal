@@ -23,13 +23,13 @@
 
     - name: create the admin user account
       user:
-        name: friend
+        name: "{{ admin_user }}"
         shell: /bin/bash
         groups: [sudo, adm, docker]
         append: false
         create_home: true
         generate_ssh_key: false
-        password: "{{ admin_password }}"
+        password: "{{ admin_password | password_hash('sha512') }}"
         state: present
         system: false
         force: true
@@ -39,7 +39,7 @@
     - name: Add admin user to the sudoers group
       copy:
         dest: "/etc/sudoers.d/admin"
-        content: "friend  ALL=(ALL)  NOPASSWD: ALL"
+        content: "{{ admin_user }}  ALL=(ALL)  NOPASSWD: ALL"
       become: true
       become_user: root
 
@@ -74,7 +74,7 @@
     - name: Deploy SSH Key to the user
       ansible.builtin.shell: /usr/bin/ssh-import-id-gh cloudymax jessebot
       become: true
-      become_user: friend
+      become_user: "{{ admin_user }}"
 
     - name: install apt packages
       apt:
