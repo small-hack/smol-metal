@@ -175,9 +175,7 @@ sudo docker run --rm --runtime=nvidia --gpus all nvidia/cuda:11.6.2-base-ubuntu2
 
 ## How to run the ansible playbooks
 
-- populate ansible/inventory
-
-- Run the playbook
+Start the api server:
 
 ```bash
 # Create a directory for a volume to store settings and a sqlite database
@@ -188,26 +186,23 @@ docker run --name api-server --detach --tty \
   --volume ~/.ara/server:/opt/ara -p 8000:8000 \
   -e ARA_ALLOWED_HOSTS="['*']" \
   docker.io/recordsansible/ara-api:latest
+```
 
-# build the runner
+build the ansible runner container
+
+```bash
 docker build -t ansible-runner .
+```
 
-# Run a playbook
+Run the main playbook (insert your own user and password values)
+
+```bash
 docker run --platform linux/amd64 -it \
   -v $(pwd)/ansible:/ansible \
   -e ARA_API_SERVER="http://192.168.50.100:8000" \
   -e ARA_API_CLIENT=http \
   ansible-runner ansible-playbook playbooks/main-playbook.yaml \
-  -i sample-inventory.yaml
+  -i sample-inventory.yaml \
+  --extra-vars "admin_password=ChangeMe!" \
+  --extra-vars "admin_user=ChangeMe"
 ```
-
-## Playbooks
-
-1. main-playbook.yaml
-  - setus up users, ssh keys, basic apt packagaes, apt-update/upgrade prometheus node-exporter
-
-2. install_brew.yaml
-  - clones the brew repo, installs it and sets the env vars correctly
-
-3. install_onboardme.yaml
-  - installs onboardme
