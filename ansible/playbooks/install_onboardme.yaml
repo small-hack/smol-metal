@@ -10,17 +10,17 @@
     - name: downloading onboardme setup
       get_url:
         url: https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
-        dest: "/home/friend/setup.sh"
+        dest: "/home/{{ user }}/setup.sh"
       become: true
       become_user: "{{ user }}"
 
     - name: change onboardme installer permissions
-      ansible.builtin.shell: chmod +x /home/friend/install.sh
+      ansible.builtin.shell: "chmod +x /home/{{ user }}/setup.sh"
       become: true
       become_user: "{{ user }}"
 
     - name: run onboardme setup
-      ansible.builtin.shell: yes |. ./setup.sh
+      ansible.builtin.shell: yes| . ./setup.sh
       args:
         chdir: /home/friend/
       become: true
