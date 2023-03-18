@@ -26,3 +26,5 @@ RUN ansible-galaxy collection install \
 ENV ANSIBLE_CALLBACK_PLUGINS="/root/.local/lib/python3.10/site-packages/ara/plugins/callback"
 ENV ARA_API_CLIENT=http
 ENV ARA_API_SERVER="http://10.0.0.3:80"
+ENV export ARA_ALLOWED_HOSTS="['*']"
+
