@@ -12,21 +12,21 @@
         url: https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
         dest: "/home/friend/setup.sh"
       become: true
-      become_user: {{ user }}
+      become_user: "{{ user }}"
 
     - name: change onboardme installer permissions
       ansible.builtin.shell: chmod +x /home/friend/install.sh
       become: true
-      become_user: {{ user }}
+      become_user: "{{ user }}"
 
     - name: run onboardme setup
       ansible.builtin.shell: yes |. ./setup.sh
       args:
         chdir: /home/friend/
       become: true
-      become_user: {{ user }}
+      become_user: "{{ user }}"
 
     - name: run onboardme
       ansible.builtin.shell: onboardme -O -l debug
       become: true
-      become_user: {{ user }}
+      become_user: "{{ user }}"
