@@ -206,15 +206,3 @@ docker run --platform linux/amd64 -it \
   --extra-vars "admin_password=ChangeMe!" \
   --extra-vars "admin_user=ChangeMe"
 ```
-
-Run the onboardme playbook:
-
-```bash
-docker run --platform linux/amd64 -it \
-  -v $(pwd)/ansible:/ansible \
-  -e ARA_API_SERVER="http://192.168.50.100:8000" \
-  -e ARA_API_CLIENT=http \
-  ansible-runner ansible-playbook playbooks/install_onboardme.yaml \
-  -i sample-inventory.yaml \
-  --extra-vars "user=friend"
-```
