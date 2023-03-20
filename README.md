@@ -49,7 +49,7 @@ apt-get install -y nvidia-driver \
   linux-headers-`uname -r`
 
 # Ubuntu:
-apt-get install -y linux-headers-generic
+apt-get install -y ubuntu-drivers-common linux-headers-generic
 ubuntu-drivers install nvidia:525
 ```
 
