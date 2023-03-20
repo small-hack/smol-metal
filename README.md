@@ -39,7 +39,8 @@ apt-get update && apt-get install -y wireguard \
   netplan.io \
   git-extras \
   rsyslog \
-  gpg
+  gpg \
+  neovim
   
 
 # Debain
