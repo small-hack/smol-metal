@@ -1,3 +1,4 @@
+#!/bin/bash
 docker run --rm -d --name haproxy \
 	-v $(pwd):/usr/local/etc/haproxy:ro \
 	--sysctl net.ipv4.ip_unprivileged_port_start=0 \
