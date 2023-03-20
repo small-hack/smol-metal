@@ -175,6 +175,39 @@ Test with:
 sudo docker run --rm --runtime=nvidia --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi
 ```
 
+## setup smol-k8s-lab
+
+1. install Python3.11 and brew
+```bash
+wget -O setup.sh https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
+. ./setup.sh
+```
+
+2. install smol-k8s-lab
+```bash
+pip3.11 install smol-k8s-lab
+```
+
+3. write setup config to `~/.config/smol-k8s-lab/config.yaml`
+```yaml
+domain:
+  base: "cloudydev.net"
+  argo_cd: "argocd"
+  minio: "minio"
+  minio_console: "console.minio"
+metallb_address_pool:
+   - 10.0.2.16/32
+   - 10.0.2.17/32
+   - 10.0.2.18/32
+email: "admin@cloudydev.net"
+external_secrets:
+  enabled: false
+log:
+  level: "info"
+```
+
+4. HAproxy
+
 ## How to run the ansible playbooks
 
 Start the api server:
