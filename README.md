@@ -5,7 +5,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
 
 ## As Sudo:
 
-1. Fix apt sources
+1. Fix apt sources (Debian only)
 
 ```bash
 cat << EOF > /etc/apt/sources.list
@@ -49,14 +49,16 @@ apt-get install -y nvidia-driver \
   linux-headers-amd64 \
   linux-headers-`uname -r`
 
-# For Ubuntu follow this guide https://www.tecmint.com/install-kernel-headers-in-ubuntu-and-debian/
-# then download your drivers from here https://www.nvidia.com/download/index.aspx?lang=en-us
-# Ubuntu's normal installer is broken right now so ubuntu-drivers autoinstall will fail on most systems
+# For Ubuntu:
+```bash
+sudo apt-get install -y linux-headers-generic && \
+sudo ubuntu-drivers install nvidia:525
 ```
 
 3. setup user
+
 ```bash
-useradd -s /bin/bash -d /home/friend/ -m -G sudo friend docker
+useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
 echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 sudo -u friend ssh-import-id-gh cloudymax
 ```
