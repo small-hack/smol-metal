@@ -41,18 +41,16 @@ apt-get update && apt-get install -y wireguard \
   rsyslog \
   gpg
   
-# Do not install on any host that will need to pass a gpu to a guest
-# This will wreck the vfio setup
+
 # Debain
 apt-get install -y nvidia-driver \
   firmware-misc-nonfree \
   linux-headers-amd64 \
   linux-headers-`uname -r`
 
-# For Ubuntu:
-```bash
-sudo apt-get install -y linux-headers-generic && \
-sudo ubuntu-drivers install nvidia:525
+# Ubuntu:
+apt-get install -y linux-headers-generic
+ubuntu-drivers install nvidia:525
 ```
 
 3. setup user
@@ -61,6 +59,7 @@ sudo ubuntu-drivers install nvidia:525
 useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
 echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 sudo -u friend ssh-import-id-gh cloudymax
+passwd friend
 ```
 
 Add user to docker group
@@ -68,7 +67,7 @@ Add user to docker group
 usermod -a -G docker friend
 ```
 
-4. bridge the network adapter
+4. bridge the network adapter (optional)
 
 https://wiki.debian.org/NetworkInterfaceNames
 
@@ -106,7 +105,7 @@ sudo netplan --debug generate
 sudo netplan --debug apply
 ```
 
-5. Set grub to enable iommu
+5. Set grub to enable iommu (GPU pass-through only)
 
 ```bash
 # /etc/default/grub
