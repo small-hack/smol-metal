@@ -1,0 +1,20 @@
+[Unit]
+Description=HAproxy Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker exec %n stop
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStartPre=/usr/bin/docker pull haproxytech/haproxy-alpine
+ExecStart=/usr/bin/docker run --rm --name %n \
+    -v /haproxy:/usr/local/etc/haproxy:ro \
+    -p 80:80 \
+    -p 443:443 \
+    -p 8404:8404 \
+    haproxytech/haproxy-alpine
+
+[Install]
+WantedBy=default.target
