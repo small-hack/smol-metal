@@ -206,7 +206,13 @@ log:
   level: "info"
 ```
 
-4. HAproxy
+4. Install HAproxy (if usiing SLIRP VM)
+
+5. Nvidia gpu operator
+
+```bash
+
+```
 
 ## How to run the ansible playbooks
 
