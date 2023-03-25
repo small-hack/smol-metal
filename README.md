@@ -42,7 +42,6 @@ apt-get update && apt-get install -y wireguard \
   gpg \
   neovim
   
-
 # Debain
 apt-get install -y nvidia-driver \
   firmware-misc-nonfree \
@@ -66,6 +65,7 @@ passwd friend
 Add user to docker group
 ```bash
 usermod -a -G docker friend
+usermod -a -G kvm friend
 ```
 
 4. bridge the network adapter (optional)
