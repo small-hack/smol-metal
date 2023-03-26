@@ -3,6 +3,24 @@
 Notes for configuring Debian Bookworm nodes for use as VPS hosts.
 The steps below setup the system to be further controlled by ansible. Eventually most of this will move into a cloid-init or pre-seed files.
 
+<details>
+  <summary>Debian</summary>
+</details>
+
+<details>
+  <summary>Ubuntu</summary>
+</details>
+
+
+<details>
+  <summary>Metal-or-Guest</summary>
+</details>
+
+
+<details>
+  <summary>VirtualizationHost-or-Node</summary>
+</details>
+
 ## As Sudo:
 
 1. Fix apt sources (Debian only)
