@@ -235,7 +235,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
     sudo docker run --rm --runtime=nvidia --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi
     ```
 
-## setup smol-k8s-lab
+## Kuberntes Node
 
 1. install Python3.11 and brew
 
@@ -245,37 +245,38 @@ The steps below setup the system to be further controlled by ansible. Eventually
     ```
 
 2. install smol-k8s-lab
-```bash
-pip3.11 install smol-k8s-lab
-```
+
+    ```bash
+    pip3.11 install smol-k8s-lab
+    ```
 
 3. write setup config to `~/.config/smol-k8s-lab/config.yaml`
 
-```bash
-mkdir -p ~/.config/smol-k8s-lab
-nvim ~/.config/smol-k8s-lab/config.yaml
-```
+    ```bash
+    mkdir -p ~/.config/smol-k8s-lab
+    nvim ~/.config/smol-k8s-lab/config.yaml
+    ```
 
-```yaml
-domain:
-  base: "cloudydev.net"
-  argo_cd: "argocd"
-  minio: "minio"
-  minio_console: "console.minio"
-metallb_address_pool:
-   - 10.0.2.16/32
-   - 10.0.2.17/32
-   - 10.0.2.18/32
-email: "admin@cloudydev.net"
-external_secrets:
-  enabled: false
-log:
-  level: "info"
-```
+    ```yaml
+    domain:
+      base: "cloudydev.net"
+      argo_cd: "argocd"
+      minio: "minio"
+      minio_console: "console.minio"
+    metallb_address_pool:
+      - 10.0.2.16/32
+      - 10.0.2.17/32
+      - 10.0.2.18/32
+    email: "admin@cloudydev.net"
+    external_secrets:
+      enabled: false
+    log:
+      level: "info"
+    ```
 
-```bash
-export KUBECONFIG=~/.config/kube/config
-```
+    ```bash
+    export KUBECONFIG=~/.config/kube/config
+    ```
 
 4. Install HAproxy (if usiing SLIRP VM)
 
