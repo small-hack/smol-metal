@@ -274,7 +274,7 @@ log:
 ```
 
 ```bash
-export KUBECONFIG="~/.config/kube/config"
+export KUBECONFIG=~/.config/kube/config
 ```
 
 4. Install HAproxy (if usiing SLIRP VM)
