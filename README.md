@@ -48,6 +48,8 @@ The steps below setup the system to be further controlled by ansible. Eventually
     useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
     echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     sudo -u friend ssh-import-id-gh cloudymax
+    sudo usermod -a -G kvm docker
+    sudo usermod -a -G kvm friend
     passwd friend
     ```
 
