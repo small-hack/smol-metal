@@ -3,7 +3,7 @@
 Notes for configuring Debian Bookworm nodes for use as VPS hosts.
 The steps below setup the system to be further controlled by ansible. Eventually most of this will move into a cloid-init or pre-seed files.
 
-## As Sudo:
+## Host Setup:
 
 1. Fix apt sources (Debian only)
 
@@ -111,7 +111,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
 7. Setup PCI/IOMMU Passthrough (Optional)
 
     <details>
-      <summary>- Enable iommu via grub</summary>
+      <summary>Enable iommu via grub</summary>
   
     ```bash
     # /etc/default/grub
@@ -129,7 +129,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
 
 
     <details>
-      <summary>- Setup GPU-Passthrough</summary>
+      <summary>Setup GPU-Passthrough</summary>
   
     ```bash
     # See: https://github.com/small-hack/smol-gpu-passthrough
@@ -182,8 +182,8 @@ The steps below setup the system to be further controlled by ansible. Eventually
     
 2. Install Container Toolkit
 
-    - nvidia-container-tooklit: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
-    - For Cuda drivers go here: https://developer.nvidia.com/cuda-downloads
+  - nvidia-container-tooklit: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+  - For Cuda drivers go here: https://developer.nvidia.com/cuda-downloads
 
     </details>
     
@@ -236,10 +236,11 @@ The steps below setup the system to be further controlled by ansible. Eventually
 ## setup smol-k8s-lab
 
 1. install Python3.11 and brew
-```bash
-wget -O setup.sh https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
-. ./setup.sh
-```
+
+    ```bash
+    wget -O setup.sh https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
+    . ./setup.sh 
+    ```
 
 2. install smol-k8s-lab
 ```bash
@@ -247,6 +248,12 @@ pip3.11 install smol-k8s-lab
 ```
 
 3. write setup config to `~/.config/smol-k8s-lab/config.yaml`
+
+```bash
+mkdir -p ~/.config/smol-k8s-lab
+nvim ~/.config/smol-k8s-lab/config.yaml
+```
+
 ```yaml
 domain:
   base: "cloudydev.net"
@@ -262,6 +269,10 @@ external_secrets:
   enabled: false
 log:
   level: "info"
+```
+
+```bash
+export KUBECONFIG="~/.config/kube/config"
 ```
 
 4. Install HAproxy (if usiing SLIRP VM)
