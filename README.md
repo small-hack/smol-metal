@@ -3,195 +3,235 @@
 Notes for configuring Debian Bookworm nodes for use as VPS hosts.
 The steps below setup the system to be further controlled by ansible. Eventually most of this will move into a cloid-init or pre-seed files.
 
-<details>
-  <summary>Debian</summary>
-</details>
-
-<details>
-  <summary>Ubuntu</summary>
-</details>
-
-
-<details>
-  <summary>Metal-or-Guest</summary>
-</details>
-
-
-<details>
-  <summary>VirtualizationHost-or-Node</summary>
-</details>
-
 ## As Sudo:
 
 1. Fix apt sources (Debian only)
 
-```bash
-cat << EOF > /etc/apt/sources.list
-deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
-deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
-
-deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
-deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
-
-deb http://deb.debian.org/debian bookworm-updates main contrib non-free
-deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
-EOF
-```
-
-2. install deps
-
-```bash
-# Package Choice Justifications
-# sudo - a user with passwordless sudo for automations
-# ssh-import-id - ssh key imports
-# wireguard - setup vpn (get keys from bitwarden)
-# curl - for onboardme
-# nvidia-driver firmware-misc-nonfree linux-headers-amd64 are for GPU
-
-apt-get update && apt-get install -y wireguard \
-  ssh-import-id \
-  sudo \
-  curl \
-  netplan.io \
-  docker.io \
-  netplan.io \
-  git-extras \
-  rsyslog \
-  gpg \
-  neovim
+    <details>
+      <summary>Click to expand</summary>
   
-# Debain
-apt-get install -y nvidia-driver \
-  firmware-misc-nonfree \
-  linux-headers-amd64 \
-  linux-headers-`uname -r`
+      ```bash
+      cat << EOF > /etc/apt/sources.list
+      deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+      deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
 
-# Ubuntu:
-apt-get install -y ubuntu-drivers-common linux-headers-generic
-ubuntu-drivers install nvidia:525
-```
+      deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+      deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
 
-3. setup user
+      deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+      deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+      EOF
+      ```
+  
+    </details>
 
-```bash
-useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
-echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-sudo -u friend ssh-import-id-gh cloudymax
-passwd friend
-```
 
-Add user to docker group
-```bash
-usermod -a -G docker friend
-usermod -a -G kvm friend
-```
+2. install basic dependancies
 
-4. bridge the network adapter (optional)
+    ```bash
+    apt-get update && apt-get install -y wireguard \
+      ssh-import-id \
+      sudo \
+      curl \
+      netplan.io \
+      docker.io \
+      netplan.io \
+      git-extras \
+      rsyslog \
+      gpg \
+      neovim
+    ```
+    
+3. Setup the user
 
-https://wiki.debian.org/NetworkInterfaceNames
+    ```bash
+    useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
+    echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    sudo -u friend ssh-import-id-gh cloudymax
+    passwd friend
+    ```
 
-/etc/udev/rules.d/70-persistent-net.rules
-```bash
+4. bridge the network adapter (Optional)
 
-```
+    <details>
+      <summary>Click to expand</summary>
+  
+    ```bash
+    # /etc/netplan/99-bridge.yaml
+    network:
+      bridges:
+        br0:
+          dhcp4: no
+          dhcp6: no
+          interfaces: [enp4s0]
+          addresses: [192.168.50.101/24]
+          routes:
+            - to: default
+              via: 192.168.50.1
+          mtu: 1500
+          nameservers:
+            addresses: [192.168.50.50]
+          parameters:
+            stp: true
+            forward-delay: 4
+      ethernets:
+        enp4s0:
+          dhcp4: no
+          dhcp6: no
+      renderer: networkd
+      version: 2
 
-```bash
-# /etc/netplan/99-bridge.yaml
-network:
-  bridges:
-    br0:
-      dhcp4: no
-      dhcp6: no
-      interfaces: [enp4s0]
-      addresses: [192.168.50.101/24]
-      routes:
-        - to: default
-          via: 192.168.50.1
-      mtu: 1500
-      nameservers:
-        addresses: [192.168.50.50]
-      parameters:
-        stp: true
-        forward-delay: 4
-  ethernets:
-    enp4s0:
-      dhcp4: no
-      dhcp6: no
-  renderer: networkd
-  version: 2
+    sudo netplan --debug generate
+    sudo netplan --debug apply
+    ```
 
-sudo netplan --debug generate
-sudo netplan --debug apply
-```
+    </details>
+    
+5. Setup Wireguard (Optional)
 
-5. Set grub to enable iommu (GPU pass-through only)
+    <details>
+      <summary>Click to expand</summary>
 
-```bash
-# /etc/default/grub
-GRUB_DEFAULT=0
-GRUB_TIMEOUT=5
-GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
-GRUB_CMDLINE_LINUX_DEFAULT="quiet preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on"
-GRUB_CMDLINE_LINUX=""
+    ```bash
+    sudo nano /etc/wireguard/wg0.conf
 
-sudo update-grub
-sudo reboot now
-```
+    sudo systemctl enable wg-quick@wg0
+    sudo systemctl restart wg-quick@wg0
+    ```
+    </details>
 
-6. Enable GPU passthrough (Optional) 
+6. Disable insecure ssh login options
 
-See: https://github.com/small-hack/smol-gpu-passthrough
+    ```bash
+    sudo wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/cloudymax/linux_notes/main/sshd_config
 
-```bash
-wget https://raw.githubusercontent.com/small-hack/smol-gpu-passthrough/main/setup.sh
+    sudo systemctl reload sshd
+    ```
 
-bash setup.sh full_run NVIDIA
-sudo reboot now
-```
+7. Setup PCI/IOMMU Passthrough (Optional)
 
-## As User:
+    <details>
+      <summary>- Enable iommu via grub</summary>
+  
+    ```bash
+    # /etc/default/grub
+    GRUB_DEFAULT=0
+    GRUB_TIMEOUT=5
+    GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
+    GRUB_CMDLINE_LINUX_DEFAULT="quiet preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on"
+    GRUB_CMDLINE_LINUX=""
 
-```bash
-sudo nano /etc/wireguard/wg0.conf
+    sudo update-grub
+    sudo reboot now
+    ```
+  
+    </details>
 
-sudo systemctl enable wg-quick@wg0
 
-sudo systemctl restart wg-quick@wg0
-```
+    <details>
+      <summary>- Setup GPU-Passthrough</summary>
+  
+    ```bash
+    # See: https://github.com/small-hack/smol-gpu-passthrough
 
-```bash
-sudo wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/cloudymax/linux_notes/main/sshd_config
+    wget https://raw.githubusercontent.com/small-hack/smol-gpu-passthrough/main/setup.sh
 
-sudo systemctl reload sshd
-```
+    bash setup.sh full_run NVIDIA
+    sudo reboot now
+    ```
+  
+    </details>
 
-# For GPUs
 
-Install nvidia-container-tooklit: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+## Guests
 
-you may have to manually set distribution=debian11 or debian10 to get this to work on
-debian bookworm/sid systems.
+1. Install GPU Drivers (Skip if kuberntes node)
 
-```bash
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+    <details>
+      <summary>Debain Drivers</summary>
+  
+      ```bash
+      apt-get install -y nvidia-driver \
+      firmware-misc-nonfree \
+      linux-headers-amd64 \
+      linux-headers-`uname -r`
+      ```
+  
+    </details>
+
+
+    <details>
+      <summary>Ubuntu Drivers</summary>
+  
+      ```bash
+      apt-get install -y ubuntu-drivers-common linux-headers-generic
+      ubuntu-drivers install nvidia:525
+      ```
+  
+    </details>
+    
+      <details>
+      <summary>Nvidia Container Runtime</summary>
+  
+      ```bash
+      apt-get install -y ubuntu-drivers-common linux-headers-generic
+      ubuntu-drivers install nvidia:525
+      ```
+    
+    </details>  
+    
+2. Install Container Toolkit
+
+    - nvidia-container-tooklit: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+    - For Cuda drivers go here: https://developer.nvidia.com/cuda-downloads
+
+    </details>
+    
+      <details>
+      <summary>Ubuntu 22.04</summary>
+  
+      ```bash
+      distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+  
+      curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
       && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
             sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
             sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+ 
+      sudo apt-get update
+      sudo apt-get install -y nvidia-container-toolkit
+      sudo nvidia-ctk runtime configure --runtime=docker
+      sudo systemctl restart docker
+      ```
+    
+    </details> 
+    
+    </details>
+    
+      <details>
+      <summary>Debian 12</summary>
+  
+      ```bash
+      distribution=debian11
+  
+      curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+ 
+      sudo apt-get update
+      sudo apt-get install -y nvidia-container-toolkit
+      sudo nvidia-ctk runtime configure --runtime=docker
+      sudo systemctl restart docker
+      ```
+    
+    </details> 
+    
+3. Test its workign with:
 
-sudo apt-get update
-sudo apt-get install -y nvidia-container-toolkit
-sudo nvidia-ctk runtime configure --runtime=docker
-sudo systemctl restart docker
-```
-
-For cuda driveers go here: https://developer.nvidia.com/cuda-downloads
-
-Test with:
-
-```bash
-sudo docker run --rm --runtime=nvidia --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi
-```
+    ```bash
+    sudo docker run --rm --runtime=nvidia --gpus all nvidia/cuda:11.6.2-base-ubuntu20.04 nvidia-smi
+    ```
 
 ## setup smol-k8s-lab
 
