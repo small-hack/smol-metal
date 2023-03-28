@@ -169,19 +169,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
       ```bash
       apt-get install -y ubuntu-drivers-common linux-headers-generic
       ubuntu-drivers install nvidia:525
-      ```
-  
-    </details>
-    
-      <details>
-      <summary>Nvidia Container Runtime</summary>
-  
-      ```bash
-      apt-get install -y ubuntu-drivers-common linux-headers-generic
-      ubuntu-drivers install nvidia:525
-      ```
-    
-    </details>  
+      ``` 
     
 2. Install Container Toolkit
 
