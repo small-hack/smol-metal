@@ -204,6 +204,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
       sudo apt-get install -y nvidia-container-toolkit
       sudo nvidia-ctk runtime configure --runtime=docker
       sudo systemctl restart docker
+      sudo sed -i 's/^#root/root/' /etc/nvidia-container-runtime/config.toml
       ```
     
     </details> 
@@ -225,6 +226,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
       sudo apt-get install -y nvidia-container-toolkit
       sudo nvidia-ctk runtime configure --runtime=docker
       sudo systemctl restart docker
+      sudo sed -i 's/^#root/root/' /etc/nvidia-container-runtime/config.toml
       ```
     
     </details> 
