@@ -29,7 +29,8 @@ The steps below setup the system to be further controlled by ansible. Eventually
 2. install basic dependancies
 
     ```bash
-    apt-get update && apt-get install -y wireguard \
+    sudo apt-get update && \
+      sudo apt-get install -y wireguard \
       ssh-import-id \
       sudo \
       curl \
@@ -45,8 +46,8 @@ The steps below setup the system to be further controlled by ansible. Eventually
 3. Setup the user
 
     ```bash
-    useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
-    echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    sudo useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
+    sudo echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     sudo -u friend ssh-import-id-gh cloudymax
     sudo usermod -a -G kvm friend
     sudo usermod -a -G docker friend
