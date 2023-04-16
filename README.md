@@ -3,30 +3,26 @@
 Notes for configuring Debian Bookworm nodes for use as VPS hosts.
 The steps below setup the system to be further controlled by ansible. Eventually most of this will move into a cloid-init or pre-seed files.
 
-## Host Setup:
+## Upgrading a host from Debian11 to Debian12
 
-1. Fix apt sources (Debian only)
-
-    <details>
-      <summary>Click to expand</summary>
+Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   
-      ```bash
-      cat << EOF > /etc/apt/sources.list
-      deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
-      deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+    ```bash
+    cat << EOF > /etc/apt/sources.list
+    deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+    deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
 
-      deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
-      deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+    deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+    deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
 
-      deb http://deb.debian.org/debian bookworm-updates main contrib non-free
-      deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
-      EOF
-      ```
-  
-    </details>
+    deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+    deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+    EOF
+    ```
+    
+## Initial Setup:
 
-
-2. install basic dependancies
+1. install basic dependancies
 
     ```bash
     sudo apt-get update && \
@@ -39,8 +35,7 @@ The steps below setup the system to be further controlled by ansible. Eventually
       netplan.io \
       git-extras \
       rsyslog \
-      gpg \
-      neovim
+      gpg 
     ```
     
 3. Setup the user
@@ -54,41 +49,38 @@ The steps below setup the system to be further controlled by ansible. Eventually
     passwd friend
     ```
 
-4. bridge the network adapter (Optional)
+## Networking
 
-    <details>
-      <summary>Click to expand</summary>
+bridge the network adapter (Optional)
   
-    ```bash
-    # /etc/netplan/99-bridge.yaml
-    network:
-      bridges:
-        br0:
-          dhcp4: no
-          dhcp6: no
-          interfaces: [enp4s0]
-          addresses: [192.168.50.101/24]
-          routes:
-            - to: default
-              via: 192.168.50.1
-          mtu: 1500
-          nameservers:
-            addresses: [192.168.50.50]
-          parameters:
-            stp: true
-            forward-delay: 4
-      ethernets:
-        enp4s0:
-          dhcp4: no
-          dhcp6: no
-      renderer: networkd
-      version: 2
+  ```bash
+  # /etc/netplan/99-bridge.yaml
+  network:
+    bridges:
+      br0:
+        dhcp4: no
+        dhcp6: no
+        interfaces: [enp4s0]
+        addresses: [192.168.50.101/24]
+        routes:
+          - to: default
+            via: 192.168.50.1
+        mtu: 1500
+        nameservers:
+          addresses: [192.168.50.50]
+        parameters:
+          stp: true
+          forward-delay: 4
+    ethernets:
+      enp4s0:
+        dhcp4: no
+        dhcp6: no
+    renderer: networkd
+    version: 2
 
-    sudo netplan --debug generate
-    sudo netplan --debug apply
-    ```
-
-    </details>
+  sudo netplan --debug generate
+  sudo netplan --debug apply
+  ```
     
 5. Setup Wireguard (Optional)
 
