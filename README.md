@@ -19,7 +19,27 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
   EOF
   ```
-    
+## Ubuntu alternative package mirror
+
+  ```bash
+  cat << EOF > /etc/apt/sources.list
+  deb http://mirror.nl.datapacket.com/ubuntu/ jammy main restricted universe multiverse
+  # deb-src http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
+
+  deb http://mirror.nl.datapacket.com/ubuntu/  jammy-updates main restricted universe multiverse
+  # deb-src http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse
+
+  deb http://mirror.nl.datapacket.com/ubuntu/  jammy-security main restricted universe multiverse
+  # deb-src http://archive.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+
+  deb http://mirror.nl.datapacket.com/ubuntu/  jammy-backports main restricted universe multiverse
+  # deb-src http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
+
+  deb http://mirror.nl.datapacket.com/ubuntu/ jammy partner
+  # deb-src http://archive.canonical.com/ubuntu/ jammy partner
+  EOF
+  ```
+  
 ## Initial Setup:
 
 1. install basic dependancies
@@ -31,11 +51,20 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       sudo \
       curl \
       netplan.io \
-      docker.io \
+      apt-transport-https \
+      ca-certificates \
+      software-properties-common
       netplan.io \
       git-extras \
       rsyslog \
-      gpg 
+      gpg
+      
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+      sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    
+    sudo apt-get update && sudo apt-get install docker-ce
     ```
     
 3. Setup the user
@@ -159,8 +188,8 @@ bridge the network adapter (Optional)
       <summary>Ubuntu Drivers</summary>
   
       ```bash
-      apt-get install -y ubuntu-drivers-common linux-headers-generic
-      ubuntu-drivers install nvidia:525
+      sudo apt-get install -y ubuntu-drivers-common linux-headers-generic
+      sudo ubuntu-drivers install nvidia:530
       ``` 
     
 2. Install Container Toolkit
