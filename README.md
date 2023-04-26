@@ -57,6 +57,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       netplan.io \
       git-extras \
       rsyslog \
+      fail2ban \
       gpg
       
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
