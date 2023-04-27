@@ -44,6 +44,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 
 1. install basic dependancies
 
+ - Apt Packages:
+ 
     ```bash
     sudo apt-get update && \
       sudo apt-get install -y wireguard \
@@ -59,7 +61,11 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       rsyslog \
       fail2ban \
       gpg
-      
+    ```
+    
+ - Docker
+ 
+    ```bash
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
       sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     
@@ -68,6 +74,15 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     sudo apt-get update && sudo apt-get install docker-ce
     ```
     
+ - Docker Compose
+   
+   ```bash
+   mkdir -p ~/.docker/cli-plugins/
+   curl -SL https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+   chmod +x ~/.docker/cli-plugins/docker-compose
+   docker compose version
+   ```
+   
 3. Setup the user
 
     ```bash
@@ -179,6 +194,7 @@ bridge the network adapter (Optional)
       apt-get install -y nvidia-driver \
       firmware-misc-nonfree \
       linux-headers-amd64 \
+      gcc \
       linux-headers-`uname -r`
       ```
   
@@ -189,7 +205,7 @@ bridge the network adapter (Optional)
       <summary>Ubuntu Drivers</summary>
   
       ```bash
-      sudo apt-get install -y ubuntu-drivers-common linux-headers-generic
+      sudo apt-get install -y ubuntu-drivers-common linux-headers-generic gcc
       sudo ubuntu-drivers install nvidia:530
       ``` 
     
