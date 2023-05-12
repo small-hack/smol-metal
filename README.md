@@ -62,7 +62,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       fail2ban \
       gpg
       
-    wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq &&\
+    wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
     chmod +x /usr/bin/yq
     ```
   
