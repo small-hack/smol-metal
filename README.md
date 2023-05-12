@@ -61,6 +61,9 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       rsyslog \
       fail2ban \
       gpg
+      
+    wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq &&\
+    chmod +x /usr/bin/yq
     ```
   
  2. install docker
