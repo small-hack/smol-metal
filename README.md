@@ -62,8 +62,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       fail2ban \
       gpg
     ```
-    
- - Docker
+  
+ 2. install docker
     
     ```bash
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
@@ -82,16 +82,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     ```bash
     sudo apt-get update && sudo apt-get install docker-ce
     ```
-    
- - Docker Compose
-   
-   ```bash
-   mkdir -p ~/.docker/cli-plugins/
-   curl -SL https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-   chmod +x ~/.docker/cli-plugins/docker-compose
-   docker compose version
-   ```
-   
+
 3. Setup the user
 
     ```bash
@@ -102,6 +93,15 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     sudo usermod -a -G docker friend
     passwd friend
     ```
+    
+4. Docker Compose
+   
+   ```bash
+   mkdir -p ~/.docker/cli-plugins/
+   curl -SL https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+   chmod +x ~/.docker/cli-plugins/docker-compose
+   docker compose version
+   ```
 
 ## Networking
 
