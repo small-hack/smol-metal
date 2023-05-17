@@ -23,8 +23,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 
   ```bash
   cat << EOF > /etc/apt/sources.list
-  deb https://mirror.nl.leaseweb.net/ubuntu/ jammy main 
-  deb-src https://mirror.nl.leaseweb.net/ubuntu/ jammy main 
+  deb https://mirror.nl.leaseweb.net/ubuntu/ jammy main multiverse restricted
+  deb-src https://mirror.nl.leaseweb.net/ubuntu/ jammy main multiverse restricted
   EOF
   ```
   
