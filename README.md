@@ -38,8 +38,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   deb http://archive.canonical.com/ubuntu/ jammy partner
   # deb-src http://archive.canonical.com/ubuntu/ jammy partner
   
-  deb https://mirror.lyrahosting.com/ubuntuarchive/ jammy main 
-  #deb-src https://mirror.lyrahosting.com/ubuntuarchive/ jammy main 
   EOF
   ```
   
