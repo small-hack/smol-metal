@@ -23,20 +23,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 
   ```bash
   cat << EOF > /etc/apt/sources.list
-  deb http://mirror.nl.datapacket.com/ubuntu/ jammy main restricted universe multiverse
-  # deb-src http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
-
-  deb http://mirror.nl.datapacket.com/ubuntu/  jammy-updates main restricted universe multiverse
-  # deb-src http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse
-
-  deb http://mirror.nl.datapacket.com/ubuntu/  jammy-security main restricted universe multiverse
-  # deb-src http://archive.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
-
-  deb http://mirror.nl.datapacket.com/ubuntu/  jammy-backports main restricted universe multiverse
-  # deb-src http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
-
-  deb http://mirror.nl.datapacket.com/ubuntu/ jammy partner
-  # deb-src http://archive.canonical.com/ubuntu/ jammy partner
+  deb https://mirror.nl.leaseweb.net/ubuntu/ jammy main 
+  deb-src https://mirror.nl.leaseweb.net/ubuntu/ jammy main 
   EOF
   ```
   
