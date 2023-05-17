@@ -43,7 +43,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       netplan.io \
       apt-transport-https \
       ca-certificates \
-      software-properties-common
+      software-properties-common \
       netplan.io \
       git-extras \
       rsyslog \
