@@ -218,8 +218,16 @@ bridge the network adapter (Optional)
       <summary>Ubuntu Drivers</summary>
   
       ```bash
-      sudo apt-get install -y ubuntu-drivers-common linux-headers-generic gcc
-      sudo ubuntu-drivers install nvidia:530
+      sudo apt-get install -y ubuntu-drivers-common \
+        linux-headers-generic \
+        gcc \
+        kmod \
+        make \
+        pkg-config \
+        libvulkan1
+  
+      #sudo ubuntu-drivers install nvidia:530
+      wget https://us.download.nvidia.com/XFree86/Linux-x86_64/525.116.04/NVIDIA-Linux-x86_64-525.116.04.run
       ``` 
     
 2. Install Container Toolkit
