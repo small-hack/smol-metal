@@ -18,6 +18,12 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   deb http://deb.debian.org/debian bookworm-updates main contrib non-free
   deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
   EOF
+  
+  sudo apt-get update && \
+  sudo apt-get upgrade -y && \
+  sudo apt-get full-upgrade -y
+  
+  reboot
   ```
 ## Ubuntu alternative package mirror
 
@@ -39,6 +45,11 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   # deb-src http://archive.canonical.com/ubuntu/ jammy partner
   
   EOF
+  sudo apt-get update && \
+  sudo apt-get upgrade -y && \
+  sudo apt-get full-upgrade -y
+  
+  reboot
   ```
   
 ## Initial Setup:
@@ -61,6 +72,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       git-extras \
       rsyslog \
       fail2ban \
+      vim \
       gpg
       
     sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
