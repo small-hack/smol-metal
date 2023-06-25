@@ -61,6 +61,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     ```bash
     sudo apt-get update && \
       sudo apt-get install -y wireguard \
+      openresolv \
       ssh-import-id \
       sudo \
       curl \
