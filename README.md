@@ -159,15 +159,79 @@ bridge the network adapter (Optional)
     <details>
       <summary>Click to expand</summary>
 
+    - Enable IP forwarding
+    ```bash
+    sudo sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+    ```
+
+    - Generate Server Keys
+    ```bash
+    cd /etc/wireguard
+    wg genkey wg genkey | tee privatekey | wg pubkey > publickey
+    ```
+    
+    - Edit the wireguard config
     ```bash
     sudo nano /etc/wireguard/wg0.conf
+    ```
 
+    - Server Config
+    ```bash
+    export SERVER_PUBLIC_KEY=$(sudo cat /etc/wireguard/publickey)
+    export SERVER_PRIVATE_KEY=$(sudo cat /etc/wireguard/privatekey)
+    export NETWORK_INTERFACE="enp0s31f6"
+    export WG_INTERFACE="wg0"
+    export SERVER_PORT="51820"
+    export WG_ADDRESS="10.2.0.1"
+
+    cat << EOF > wg0.conf
+    [Interface]
+    Address = ${WG_ADDRESS}/24
+    ListenPort = ${SERVER_PORT}
+    PrivateKey = ${SERVER_PRIVATE_KEY}
+
+    PostUp = iptables -A FORWARD -i ${WG_INTERFACE} -j ACCEPT; iptables -t nat -A POSTROUTING -o ${NETWORK_INTERFACE} -j MASQUERADE; ip6tables -A FORWARD -i ${WG_INTERFACE} -j ACCEPT; ip6tables -t nat -A POSTROUTING -o ${NETWORK_INTERFACE} -j MASQUERADE
+    PostDown = iptables -D FORWARD -i ${WG_INTERFACE} -j ACCEPT; iptables -t nat -D POSTROUTING -o ${NETWORK_INTERFACE} -j MASQUERADE; ip6tables -D FORWARD -i ${WG_INTERFACE} -j ACCEPT; ip6tables -t nat -D POSTROUTING -o ${NETWORK_INTERFACE} -j MASQUERADE
+    EOF
+    ```
+
+    - Client Config
+    ```bash
+    mkdir client && cd client
+    wg genkey wg genkey | tee privatekey | wg pubkey > publickey
+    export PUBLIC_KEY=$(cat ./publickey)
+    export PRIVATE_KEY=$(cat ./privatekey)
+    export SERVER_PUBLIC_IP="85.10.207.26"
+    export SERVER_PORT="51820"
+    export IP_ADDRESS="10.2.0.2"
+    export DNS_SERVER="192.168.50.50"
+
+    cat << EOF > wg0.conf
+    [Interface]
+    PrivateKey = ${PRIVATE_KEY}
+    Address = ${IP_ADDRESS}/24
+    DNS = ${DNS_SERVER}
+
+    [Peer]
+    PublicKey = ${SERVER_PUBLIC_KEY}
+    AllowedIPs = 10.2.0.0/24
+    Endpoint = ${SERVER_PUBLIC_IP}:${SERVER_PORT}
+    PersistentKeepalive = 15
+    EOF
+    ```
+
+    - Enable wireguard as a service
+    ```bash
     sudo systemctl enable wg-quick@wg0
+    ```
+
+    - Start the service
+    ```bash
     sudo systemctl restart wg-quick@wg0
     ```
     </details>
 
-6. Disable insecure ssh login options
+5. Disable insecure ssh login options
 
     ```bash
     sudo wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/cloudymax/linux_notes/main/sshd_config
@@ -175,7 +239,7 @@ bridge the network adapter (Optional)
     sudo systemctl reload sshd
     ```
 
-7. Setup PCI/IOMMU Passthrough (Optional)
+6. Setup PCI/IOMMU Passthrough (Optional)
 
     <details>
       <summary>Enable iommu via grub</summary>
