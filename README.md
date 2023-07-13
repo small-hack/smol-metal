@@ -65,6 +65,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       ssh-import-id \
       sudo \
       curl \
+      tmux \
       netplan.io \
       apt-transport-https \
       ca-certificates \
