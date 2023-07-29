@@ -70,7 +70,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       apt-transport-https \
       ca-certificates \
       software-properties-common \
-      netplan.io \
+      htop \
       git-extras \
       rsyslog \
       fail2ban \
