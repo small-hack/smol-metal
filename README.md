@@ -66,6 +66,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       sudo \
       curl \
       tmux \
+      neovim \
       netplan.io \
       apt-transport-https \
       ca-certificates \
@@ -79,7 +80,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       open-iscsi \
       nfs-common
       
-    sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq &&\
+    sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
     sudo chmod +x /usr/bin/yq
     ```
   
@@ -100,7 +101,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     ```
     
     ```bash
-    sudo apt-get update && sudo apt-get install docker-ce
+    sudo apt-get update && \
+    sudo apt-get install -y docker-ce
     ```
 
 3. Setup the user
