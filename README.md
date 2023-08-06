@@ -87,7 +87,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       sudo systemctl start fail2ban
     ```
     
-    Prometheus:
+    Prometheus (Run this as root)
     ```bash
     wget -O /opt/node_exporter-1.6.1.linux-amd64.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz && \
     tar -xvf /opt/node_exporter-1.6.1.linux-amd64.tar.gz -C /opt && \
@@ -98,8 +98,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     wget https://raw.githubusercontent.com/small-hack/smol-metal/main/node-exporter.service && \
     sudo mv node-exporter.service /etc/systemd/system/node-exporter.service && \
     systemctl daemon-reload && \
-    systemctl enable node_exporter && \
-    systemctl restart node_exporter
+    systemctl enable node-exporter && \
+    systemctl restart node-exporter
     ```
   
  2. Install Docker and Onboardme
