@@ -78,13 +78,31 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       vim \
       gpg \
       open-iscsi \
-      nfs-common
-      
-    sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
-    sudo chmod +x /usr/bin/yq
+      nfs-common \
+      ncdu \
+      iotop && \
+      sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
+      sudo chmod +x /usr/bin/yq && \
+      sudo systemctl enable fail2ban && \
+      sudo systemctl start fail2ban
+    ```
+    
+    Prometheus:
+    ```bash
+    wget -O /opt/node_exporter-1.4.0.linux-amd64.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz && \
+    tar -xvf /opt/node_exporter-1.4.0.linux-amd64.tar.gz -C /opt && \
+    rm /opt/node_exporter-1.4.0.linux-amd64.tar.gz && \
+    rm /opt/node_exporter && \
+    ln -s node_exporter-1.4.0.linux-amd64 /opt/node_exporter
+    
+    wget https://raw.githubusercontent.com/small-hack/smol-metal/main/node-exporter.service && \
+    sudo mv node-exporter.service /etc/systemd/system/node-exporter.service && \
+    systemctl daemon-reload && \
+    systemctl enable node_exporter && \
+    systemctl restart node_exporter
     ```
   
- 2. install docker
+ 2. Install Docker and Onboardme
     
     ```bash
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
@@ -102,7 +120,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     
     ```bash
     sudo apt-get update && \
-    sudo apt-get install -y docker-ce
+    sudo apt-get install -y docker-ce && \
+    docker pull jessebot/onboardme:debian12-devops
     ```
 
 3. Setup the user
