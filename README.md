@@ -80,7 +80,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       open-iscsi \
       nfs-common \
       ncdu \
-      wireguard \
       iotop && \
       sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
       sudo chmod +x /usr/bin/yq && \
