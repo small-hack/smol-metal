@@ -16,6 +16,17 @@ RUN pip3 --no-cache-dir install --upgrade pip \
   && pip3 install ansible-core ansible-cmdb \
   && pip3 install --user ansible ara
 
+ENV BW_CLI_VERSION=2023.1.0
+
+RUN apt update && \
+  apt install -y wget unzip \
+  && wget https://github.com/bitwarden/clients/releases/download/cli-v${BW_CLI_VERSION}/bw-linux-${BW_CLI_VERSION}.zip \
+  && unzip bw-linux-${BW_CLI_VERSION}.zip \
+  && chmod +x bw \
+  && mv bw /usr/local/bin/bw \
+  && rm -rfv *.zip \
+  && rm -rf /var/lib/apt/lists/*
+    
 WORKDIR /ansible
 
 RUN ansible-galaxy collection install \
