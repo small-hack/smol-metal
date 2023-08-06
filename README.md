@@ -80,11 +80,20 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       open-iscsi \
       nfs-common \
       ncdu \
+      wireguard \
       iotop && \
       sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
       sudo chmod +x /usr/bin/yq && \
       sudo systemctl enable fail2ban && \
       sudo systemctl start fail2ban
+    ```
+    
+    Brew and Python3.11
+    ```
+    wget -O setup.sh https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
+    . ./setup.sh 
+
+    brew install bitwarden-cli b2-tools k9s 
     ```
     
     Prometheus (Run this as root)
