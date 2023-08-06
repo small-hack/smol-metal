@@ -36,3 +36,13 @@ RUN ansible-galaxy collection install \
 
 ENV ANSIBLE_CALLBACK_PLUGINS="/root/.local/lib/python3.10/site-packages/ara/plugins/callback"
 
+# create a user for non-root operation
+ARG USER="user"
+RUN useradd -ms /bin/bash $USER && \
+        mkdir -p /home/$USER/.local/bin && \
+        mkdir -p /home/$USER/.local/lib && \
+        chown -R $USER:$USER /home/$USER/
+
+# Swap to user account
+USER $USER
+WORKDIR /home/$USER/
