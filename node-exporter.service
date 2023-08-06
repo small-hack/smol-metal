@@ -5,9 +5,8 @@ After=network-online.target
 
 [Service]
 User=root
-EnvironmentFile=/etc/default/node_exporter
-ExecStart=/opt/node_exporter/node_exporter
-Restart=on-failure
+ExecStart=/bin/sh -c '/opt/node_exporter/node_exporter'
+Restart=always
 RestartSec=5
 
 [Install]
