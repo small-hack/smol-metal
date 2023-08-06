@@ -92,7 +92,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     wget -O /opt/node_exporter-1.6.1.linux-amd64.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz && \
     tar -xvf /opt/node_exporter-1.6.1.linux-amd64.tar.gz -C /opt && \
     rm /opt/node_exporter-1.6.1.linux-amd64.tar.gz && \
-    rm /opt/node_exporter && \
     ln -s node_exporter-1.6.1.linux-amd64 /opt/node_exporter
     
     wget https://raw.githubusercontent.com/small-hack/smol-metal/main/node-exporter.service && \
