@@ -89,11 +89,11 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     
     Prometheus:
     ```bash
-    wget -O /opt/node_exporter-1.4.0.linux-amd64.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz && \
-    tar -xvf /opt/node_exporter-1.4.0.linux-amd64.tar.gz -C /opt && \
-    rm /opt/node_exporter-1.4.0.linux-amd64.tar.gz && \
+    wget -O /opt/node_exporter-1.6.1.linux-amd64.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.6.1.linux-amd64.tar.gz && \
+    tar -xvf /opt/node_exporter-1.6.1.linux-amd64.tar.gz -C /opt && \
+    rm /opt/node_exporter-1.6.1.linux-amd64.tar.gz && \
     rm /opt/node_exporter && \
-    ln -s node_exporter-1.4.0.linux-amd64 /opt/node_exporter
+    ln -s node_exporter-1.6.1.linux-amd64 /opt/node_exporter
     
     wget https://raw.githubusercontent.com/small-hack/smol-metal/main/node-exporter.service && \
     sudo mv node-exporter.service /etc/systemd/system/node-exporter.service && \
