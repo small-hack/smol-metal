@@ -92,7 +92,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     wget -O setup.sh https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
     . ./setup.sh 
 
-    brew install bitwarden-cli b2-tools k9s 
+    brew install bitwarden-cli b2-tools k9s neovim
     ```
     
     Prometheus (Run this as root)
