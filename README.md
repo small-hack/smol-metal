@@ -197,7 +197,7 @@ bridge the network adapter (Optional)
     - Generate Server Keys
     ```bash
     cd /etc/wireguard
-    wg genkey wg genkey | tee privatekey | wg pubkey > publickey
+    wg genkey | tee privatekey | wg pubkey > publickey
     ```
     
     - Edit the wireguard config
