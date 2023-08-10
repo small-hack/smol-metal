@@ -228,7 +228,7 @@ bridge the network adapter (Optional)
     - Client Config
     ```bash
     mkdir client && cd client
-    wg genkey wg genkey | tee privatekey | wg pubkey > publickey
+    wg genkey | tee privatekey | wg pubkey > publickey
     export PUBLIC_KEY=$(cat ./publickey)
     export PRIVATE_KEY=$(cat ./privatekey)
     export SERVER_PUBLIC_IP="85.10.207.26"
