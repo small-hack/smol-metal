@@ -358,7 +358,7 @@ bridge the network adapter (Optional)
  
       sudo apt-get update
       sudo apt-get install -y nvidia-container-toolkit
-      sudo nvidia-ctk runtime configure --runtime=docker
+      sudo nvidia-ctk runtime configure --runtime=docker --set-as-default
       sudo systemctl restart docker
       sudo sed -i 's/^#root/root/' /etc/nvidia-container-runtime/config.toml
       ```
