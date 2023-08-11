@@ -109,7 +109,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     systemctl restart node-exporter
     ```
   
- 2. Install Docker and Onboardme
+ 2. Install Docker and Onboardme (Run as user, not as root)
     
     ```bash
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
