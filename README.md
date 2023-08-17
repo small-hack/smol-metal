@@ -66,7 +66,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       sudo \
       curl \
       tmux \
-      neovim \
       netplan.io \
       apt-transport-https \
       ca-certificates \
