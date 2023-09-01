@@ -108,7 +108,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     sudo echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     sudo -u friend ssh-import-id-gh cloudymax
     sudo usermod -a -G kvm friend
-    sudo usermod -a -G docker friend
     passwd friend
     ```
     
@@ -131,7 +130,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     ```bash
     sudo apt-get update && \
     sudo apt-get install -y docker-ce && \
-    docker pull jessebot/onboardme:debian12-devops
+    sudo usermod -a -G docker friend
     ```
 
 3. Brew and Python3.11 (Run as User)
