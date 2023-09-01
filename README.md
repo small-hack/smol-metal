@@ -19,12 +19,13 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
   EOF
   
-  sudo apt-get update && \
-  sudo apt-get upgrade -y && \
-  sudo apt-get full-upgrade -y
+  apt-get update && \
+  apt-get upgrade -y && \
+  apt-get full-upgrade -y
   
   reboot
   ```
+
 ## Ubuntu alternative package mirror
 
   ```bash
