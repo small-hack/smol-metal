@@ -55,13 +55,13 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   
 ## Initial Setup:
 
-1. install basic dependancies
+1. install basic dependancies (Run as Root)
 
  - Apt Packages:
  
     ```bash
-    sudo apt-get update && \
-      sudo apt-get install -y wireguard \
+    apt-get update && \
+      apt-get install -y wireguard \
       openresolv \
       ssh-import-id \
       sudo \
