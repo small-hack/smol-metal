@@ -183,7 +183,7 @@ bridge the network adapter (Optional)
   sudo netplan --debug apply
   ```
     
-5. Setup Wireguard (Optional)
+5. Setup Wireguard (Optional) (Run as Root)
 
     <details>
       <summary>Click to expand</summary>
@@ -201,7 +201,7 @@ bridge the network adapter (Optional)
     
     - Edit the wireguard config
     ```bash
-    sudo nano /etc/wireguard/wg0.conf
+    nano /etc/wireguard/wg0.conf
     ```
 
     - Server Config
