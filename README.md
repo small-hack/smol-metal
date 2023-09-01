@@ -87,14 +87,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       sudo systemctl start fail2ban
     ```
     
-    Brew and Python3.11
-    ```
-    wget -O setup.sh https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
-    . ./setup.sh 
-
-    brew install bitwarden-cli b2-tools k9s neovim
-    ```
-    
     Prometheus (Run this as root)
     ```bash
     wget -O /opt/node_exporter-1.6.1.linux-amd64.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz && \
@@ -108,8 +100,19 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     systemctl enable node-exporter && \
     systemctl restart node-exporter
     ```
-  
- 2. Install Docker and Onboardme (Run as user, not as root)
+
+2. Setup the user
+
+    ```bash
+    sudo useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
+    sudo echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    sudo -u friend ssh-import-id-gh cloudymax
+    sudo usermod -a -G kvm friend
+    sudo usermod -a -G docker friend
+    passwd friend
+    ```
+    
+ 3. Install Docker and Onboardme (Run as user, not as root)
     
     ```bash
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
@@ -131,18 +134,15 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     docker pull jessebot/onboardme:debian12-devops
     ```
 
-3. Setup the user
+3. Brew and Python3.11 (Run as User)
+    ```
+    wget -O setup.sh https://raw.githubusercontent.com/jessebot/onboardme/main/setup.sh
+    . ./setup.sh 
 
-    ```bash
-    sudo useradd -s /bin/bash -d /home/friend/ -m -G sudo friend
-    sudo echo "friend ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-    sudo -u friend ssh-import-id-gh cloudymax
-    sudo usermod -a -G kvm friend
-    sudo usermod -a -G docker friend
-    passwd friend
+    brew install bitwarden-cli b2-tools k9s neovim
     ```
     
-4. Docker Compose
+4. Docker Compose (Run as User)
    
    ```bash
    mkdir -p ~/.docker/cli-plugins/
