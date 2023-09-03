@@ -302,6 +302,26 @@ bridge the network adapter (Optional)
   
     </details>
 
+  vGPU Install
+  ```console
+  apt install -y git build-essential \
+      dkms \
+      mdevctl \
+      firmware-misc-nonfree \
+      linux-headers-amd64 \
+      gcc \
+      linux-headers-`uname -r`
+
+  cd /root
+  git clone https://gitlab.com/polloloco/vgpu-proxmox.git
+  cd /opt
+  git clone https://github.com/mbilker/vgpu_unlock-rs.git
+  curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal
+  source $HOME/.cargo/env
+  cd vgpu_unlock-rs/
+  cargo build --release
+
+  ```
 
 ## Guests
 
