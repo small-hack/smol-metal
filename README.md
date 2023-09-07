@@ -303,6 +303,25 @@ bridge the network adapter (Optional)
     </details>
 
   vGPU Install
+
+    
+  ```bash
+  # /etc/default/grub
+  GRUB_DEFAULT=0
+  GRUB_TIMEOUT=5
+  GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
+  GRUB_CMDLINE_LINUX_DEFAULT="quiet preempt=voluntary iommu=pt amd_iommu=on intel_iommu=on"
+  GRUB_CMDLINE_LINUX=""
+
+  sudo update-grub
+
+  echo -e "vfio\nvfio_iommu_type1\nvfio_pci\nvfio_virqfd" >> /etc/modules
+  echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
+  update-initramfs -u -k all
+
+  sudo reboot now
+  ```
+    
   ```console
   apt install -y git build-essential \
       dkms \
@@ -314,12 +333,32 @@ bridge the network adapter (Optional)
 
   cd /root
   git clone https://gitlab.com/polloloco/vgpu-proxmox.git
+
   cd /opt
   git clone https://github.com/mbilker/vgpu_unlock-rs.git
+
+  cd /tmp
   curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal
   source $HOME/.cargo/env
-  cd vgpu_unlock-rs/
+
+  cd /opt/vgpu_unlock-rs/
   cargo build --release
+
+  mkdir /etc/vgpu_unlock
+  touch /etc/vgpu_unlock/profile_override.toml
+
+  mkdir /etc/systemd/system/{nvidia-vgpud.service.d,nvidia-vgpu-mgr.service.d}
+  echo -e "[Service]\nEnvironment=LD_PRELOAD=/opt/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" > /etc/systemd/system/nvidia-vgpud.service.d/vgpu_unlock.conf
+  echo -e "[Service]\nEnvironment=LD_PRELOAD=/opt/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" > /etc/systemd/system/nvidia-vgpu-mgr.service.d/vgpu_unlock.conf
+
+download driver
+unzip NVIDIA-GRID-Linux-KVM-535.54.06-535.54.03-536.25.zip
+chmod +x NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run
+./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/535.54.06.patch
+./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm-custom.run --dkms
+
+
+
 
   ```
 
