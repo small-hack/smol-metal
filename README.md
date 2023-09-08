@@ -361,15 +361,15 @@ bridge the network adapter (Optional)
   mdevctl types
 
   export UUID=$(uuidgen)
-  # get from nvidia-smi
-  export PCI_ADDRESS="00000000:01:00.0"
+  # get from nvidia-smi, drop 4 of the leading 0's
+  export PCI_ADDRESS="0000:01:00.0"
   export TYPE="nvidia-156"
 
-  mdevctl start -u $UUID -p $PCI_ADDRESS --type $TYPE
-  mdevctl define --auto --uuid $UUID
+  sudo mdevctl start -u $UUID -p $PCI_ADDRESS --type $TYPE
+  sudo mdevctl define --auto --uuid $UUID
 
   # in qemu
-  -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/vgpu-uuid
+  -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/$UUID
   ```
 
 ## Guests
