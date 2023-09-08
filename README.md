@@ -359,6 +359,16 @@ bridge the network adapter (Optional)
 
   reboot
   mdevctl types
+
+  export UUID=$(uuidgen)
+  export PCI_ADDRESS=$(lspci |grep NVIDIA |grep VGA |awk '{print $1}')
+  export TYPE="nvidia-156"
+
+  mdevctl start -u $UUID -p $PCI_ADDRESS --type $TYPE
+  mdevctl define --auto --uuid $UUID
+
+  # in qemu
+  -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/vgpu-uuid
   ```
 
 ## Guests
