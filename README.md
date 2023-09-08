@@ -361,7 +361,8 @@ bridge the network adapter (Optional)
   mdevctl types
 
   export UUID=$(uuidgen)
-  export PCI_ADDRESS=$(lspci |grep NVIDIA |grep VGA |awk '{print $1}')
+  # get from nvidia-smi
+  export PCI_ADDRESS="00000000:01:00.0"
   export TYPE="nvidia-156"
 
   mdevctl start -u $UUID -p $PCI_ADDRESS --type $TYPE
