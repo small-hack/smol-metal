@@ -351,15 +351,14 @@ bridge the network adapter (Optional)
   echo -e "[Service]\nEnvironment=LD_PRELOAD=/opt/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" > /etc/systemd/system/nvidia-vgpud.service.d/vgpu_unlock.conf
   echo -e "[Service]\nEnvironment=LD_PRELOAD=/opt/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" > /etc/systemd/system/nvidia-vgpu-mgr.service.d/vgpu_unlock.conf
 
-download driver
-unzip NVIDIA-GRID-Linux-KVM-535.54.06-535.54.03-536.25.zip
-chmod +x NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run
-./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/535.54.06.patch
-./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm-custom.run --dkms
+  download driver
+  unzip NVIDIA-GRID-Linux-KVM-535.54.06-535.54.03-536.25.zip
+  chmod +x NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run
+  ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/535.54.06.patch
+  ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm-custom.run --dkms
 
-
-
-
+  reboot
+  mdevctl types
   ```
 
 ## Guests
