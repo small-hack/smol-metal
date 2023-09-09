@@ -302,7 +302,7 @@ bridge the network adapter (Optional)
   
     </details>
 
-  vGPU Install
+  vGPU Install (run all this as root)
 
     
   ```bash
@@ -361,16 +361,43 @@ bridge the network adapter (Optional)
   reboot
   mdevctl types
 
-  export UUID=$(uuidgen)
   # get from nvidia-smi, drop 4 of the leading 0's
-  export PCI_ADDRESS="0000:01:00.0"
-  export TYPE="nvidia-156"
+  export PCI_ADDRESS="0000:04:00.0"
+  export DOMAIN=$(echo $PCI_ADDRESS |awk -F: '{print $1}')
+  export BUS=$(echo $PCI_ADDRESS |awk -F: '{print $2}')
+  export SLOT=$(echo $PCI_ADDRESS |awk -F: '{print $3}' |awk -F. '{print $1}')
+  export FUNCTION=$(echo $PCI_ADDRESS |awk -F. '{print $2}')
+  export TYPE="nvidia-18"
 
-  sudo mdevctl start -u $UUID -p $PCI_ADDRESS --type $TYPE
+  /usr/lib/nvidia/sriov-manage -e $PCI_ADDRESS
+  cd /sys/bus/pci/devices/$DOMAIN\:$BUS\:$SLOT.$FUNCTION/mdev_supported_types/
+
+  # get names
+  /usr/bin/cat nvidia-*/name
+
+  # get directory for desired card type
+  export CARD="M60-2Q"
+  export DIRECTORY=$(grep -l $CARD nvidia-*/name |awk -F/ '{print $1}')
+
+  # Check how many instances are available
+  /usr/bin/cat $DIRECTORY/available_instances
+
+  # Create a card
+  export UUID=$(uuidgen)
+  echo $UUID > $DIRECTORY/create
+
+  # Verify its there
+  ls /sys/bus/mdev/devices/$UUID
+
+  # initialize the card
   sudo mdevctl define --auto --uuid $UUID
 
-  # in qemu
-  -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/$UUID
+  # verify mdev has it
+  mdevctl list
+
+  # in qemu add the gpu like this, also create a UUID for the VM
+  -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/$UUID \
+  -uuid ebb10a6e-7ac9-49aa-af92-f56bb8c65893
   ```
 
 ## Guests
