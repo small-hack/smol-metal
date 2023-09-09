@@ -513,6 +513,19 @@ bridge the network adapter (Optional)
 
 ```
 
+## Windows Guests
+
+- Install Virtio drivers for disks at boot - [Link](https://linuxhint.com/install_virtio_drivers_kvm_qemu_windows_vm/)
+- Install virtio-gpu drivers after first boot 
+- Enable remote desktop - [Link](https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c#ID0EDD=Windows_10)
+- Enable RDP GPU acceleration - [Link](https://www.leadergpu.com/articles/483-how-to-enable-gpu-rendering-for-microsoft-remote-desktop-on-leadergpu-servers)
+- Enable 60 FPS for RDP - [Link](https://learn.microsoft.com/en-us/troubleshoot/windows-server/remote/frame-rate-limited-to-30-fps)
+- Install GPU Drivers
+- Disable Sleep/Suspend
+- Activate licenses (optional)
+- Enable Xbox system services - [Link](https://www.guidingtech.com/how-to-fix-xbox-app-wont-let-me-signin-on-windows/)
+- Install Steam, EA App, Uplay, Epic Games Store, Xbox App, WSL
+
 ## How to run the ansible playbooks
 
 Start the api server:
