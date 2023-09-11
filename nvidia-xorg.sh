@@ -14,15 +14,16 @@ export REFRESH=60
 export CDEPTH=24
 export DPI=96
 export VIDEO_PORT=DFP
+export USERNAME="friend"
 
 
 # Create and modify permissions of XDG_RUNTIME_DIR
-sudo -u user mkdir -pm700 /tmp/runtime-user
-sudo chown user:user /tmp/runtime-user
-sudo -u user chmod 700 /tmp/runtime-user
+sudo -u $USERNAME mkdir -pm700 /tmp/runtime-user
+sudo chown $USERNAME:$USERNAME /tmp/runtime-user
+sudo -u $USERNAME chmod 700 /tmp/runtime-user
 
 # Make user directory owned by the user in case it is not
-sudo chown user:user /home/user
+sudo chown $USERNAME:$USERNAME /home/$USERNAME
 
 # This symbolic link enables running Xorg inside a container with `-sharevts`
 sudo ln -snf /dev/ptmx /dev/tty7
@@ -95,5 +96,4 @@ echo "Waiting for X socket"
 until [ -S "/tmp/.X11-unix/X${DISPLAY/:/}" ]; do sleep 1; done
 echo "X socket is ready"
 
-echo "Session Running. Press [Return] to exit."
-read
+echo "Session Running."
