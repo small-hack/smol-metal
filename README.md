@@ -331,7 +331,8 @@ bridge the network adapter (Optional)
       firmware-misc-nonfree \
       linux-headers-amd64 \
       gcc \
-      linux-headers-`uname -r`
+      linux-headers-`uname -r` \
+      libvulkan1
 
   cd /root
   git clone https://gitlab.com/polloloco/vgpu-proxmox.git
@@ -414,7 +415,8 @@ bridge the network adapter (Optional)
       firmware-misc-nonfree \
       linux-headers-amd64 \
       gcc \
-      linux-headers-`uname -r`
+      linux-headers-`uname -r` \
+      libvulkan1
       ```
   
     </details>
