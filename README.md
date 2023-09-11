@@ -401,6 +401,8 @@ bridge the network adapter (Optional)
   # in qemu add the gpu like this, also create a UUID for the VM
   -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/$UUID \
   -uuid ebb10a6e-7ac9-49aa-af92-f56bb8c65893
+
+  # look into license server next https://git.collinwebdesigns.de/oscar.krause/fastapi-dls
   ```
 
 ## Guests
