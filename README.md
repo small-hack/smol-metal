@@ -356,6 +356,7 @@ bridge the network adapter (Optional)
   download driver
   wget https://f004.backblazeb2.com/file/buildstar-public-share/NVIDIA-GRID-Linux-KVM-535.54.06-535.54.03-536.25.zip
   unzip NVIDIA-GRID-Linux-KVM-535.54.06-535.54.03-536.25.zip
+  cd Host_Drivers
   chmod +x NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run
   ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/535.54.06.patch
   ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm-custom.run --dkms
