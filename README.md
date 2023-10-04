@@ -331,7 +331,8 @@ bridge the network adapter (Optional)
       linux-headers-amd64 \
       gcc \
       linux-headers-`uname -r` \
-      libvulkan1
+      libvulkan1 \
+      libglvnd-dev
 
   cd /root
   git clone https://gitlab.com/polloloco/vgpu-proxmox.git
@@ -418,7 +419,8 @@ bridge the network adapter (Optional)
       linux-headers-amd64 \
       gcc \
       linux-headers-`uname -r` \
-      libvulkan1
+      libvulkan1 \
+      libglvnd-dev
       ```
   
     </details>
@@ -434,7 +436,8 @@ bridge the network adapter (Optional)
         kmod \
         make \
         pkg-config \
-        libvulkan1
+        libvulkan1 \
+        libglvnd-dev
   
       #sudo ubuntu-drivers install nvidia:530
       wget https://us.download.nvidia.com/XFree86/Linux-x86_64/525.116.04/NVIDIA-Linux-x86_64-525.116.04.run
