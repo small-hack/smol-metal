@@ -403,7 +403,20 @@ bridge the network adapter (Optional)
   -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/$UUID \
   -uuid ebb10a6e-7ac9-49aa-af92-f56bb8c65893
 
-  # look into license server next https://git.collinwebdesigns.de/oscar.krause/fastapi-dls
+  # Setup license Server
+  WORKING_DIR=/opt/docker/fastapi-dls/cert
+  mkdir -p $WORKING_DIR
+  cd $WORKING_DIR
+
+  # create instance private and public key for singing JWT's
+  openssl genrsa -out $WORKING_DIR/instance.private.pem 2048 
+  openssl rsa -in $WORKING_DIR/instance.private.pem -outform PEM -pubout -out $WORKING_DIR/instance.public.pem
+
+  # create ssl certificate for integrated webserver (uvicorn) - because clients rely on ssl
+  openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout  $WORKING_DIR/webserver.key -out $WORKING_DIR/webserver.crt
+
+  # start license server
+  docker run -e DLS_URL=<HOST IP ADDRESS> -e DLS_PORT=443 -p 443:443 -v $WORKING_DIR:/app/cert -v dls-db:/app/database collinwebdesigns/fastapi-dls:latest
   ```
 
 ## Guests
@@ -541,13 +554,12 @@ bridge the network adapter (Optional)
     export KUBECONFIG=~/.config/kube/config
     ```
 
-4. Install HAproxy (if usiing SLIRP VM)
-
-5. Nvidia gpu operator
-
-```bash
-
-```
+- Steam
+  ```bash
+  sudo dpkg --add-architecture i386
+  sudo apt-get install steam-installer pciutils 
+  ~/.steam/debian-installation/steam.sh
+  ```
 
 ## Windows Guests
 
