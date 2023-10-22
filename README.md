@@ -663,3 +663,13 @@ docker run --platform linux/amd64 -it \
   --extra-vars "admin_password=ChangeMe!" \
   --extra-vars "admin_user=ChangeMe"
 ```
+
+Install steam
+
+```bash
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install -y steam-installer
+export DISLAY=:0
+steam
+```
