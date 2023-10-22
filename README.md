@@ -44,6 +44,10 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   apt-get install -y linux-image-6.1.0-11-amd64 linux-headers-6.1.0-11-amd64
   ```
 
+- Donwload meta package from source if its not in the apt list
+  
+  - https://packages.debian.org/search?keywords=linux-image-amd64
+
 - List all installed kernels and headers
 
   ```bash
@@ -59,7 +63,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 - prevent changes
 
   ```bash
-  sudo apt-mark hold linux-image-rt-amd64
+  sudo apt-mark hold linux-image-amd64
   sudo apt-mark hold linux-image-6.1.0-11-amd64
   sudo apt-mark hold linux-headers-6.1.0-11-amd64
   ```
