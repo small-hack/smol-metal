@@ -53,6 +53,12 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   apt-get --purge remove linux-image-6.1.0-12-amd64 linux-image-amd64 
   ```
 
+- prevent changes
+
+  ```bash
+  sudo apt-mark hold linux-image-6.1.0-11-amd64
+  sudo apt-mark hold linux-headers-6.1.0-11-amd64
+  ```
 - reboot
 
 
