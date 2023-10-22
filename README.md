@@ -17,6 +17,9 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 
   deb http://deb.debian.org/debian bookworm-updates main contrib non-free
   deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+
+  deb http://deb.debian.org/debian bookworm-backports main
+  deb http://deb.debian.org/debian bullseye-backports main
   EOF
   
   apt-get update && \
