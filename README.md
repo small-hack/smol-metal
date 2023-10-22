@@ -467,6 +467,14 @@ bridge the network adapter (Optional)
   docker run -e DLS_URL=<HOST IP ADDRESS> -e DLS_PORT=443 -p 443:443 -v $WORKING_DIR:/app/cert -v dls-db:/app/database collinwebdesigns/fastapi-dls:latest
   ```
 
+  On the client
+  ```bash
+  wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://<dls-hostname-or-ip>/-/client-token
+
+  service nvidia-gridd restart
+  nvidia-smi -q | grep "License"
+  ```
+
 ## Guests
 
 1. Install GPU Drivers (Skip if kuberntes node)
