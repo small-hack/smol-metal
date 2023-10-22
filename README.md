@@ -26,6 +26,36 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   reboot
   ```
 
+## Install a specific kernel
+
+- List available kernels
+  
+  ```bash
+  apt list linux-*image-*
+  apt list linux-*headers-*
+  ```
+
+- Install deired kernel and headers
+
+  ```bash
+  apt-get install -y linux-image-6.1.0-11-amd64 linux-headers-6.1.0-11-amd64
+  ```
+
+- List all installed kernels and headers
+
+  ```bash
+  dpkg --list | egrep -i --color 'linux-image|linux-headers'
+  ```
+
+- Remove undesired kernels and headers
+
+  ```bash
+  apt-get --purge remove linux-image-6.1.0-12-amd64 linux-image-amd64 
+  ```
+
+- reboot
+
+
 ## Ubuntu alternative package mirror
 
   ```bash
