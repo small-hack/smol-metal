@@ -56,6 +56,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 - prevent changes
 
   ```bash
+  sudo apt-mark hold linux-image-rt-amd64
   sudo apt-mark hold linux-image-6.1.0-11-amd64
   sudo apt-mark hold linux-headers-6.1.0-11-amd64
   ```
