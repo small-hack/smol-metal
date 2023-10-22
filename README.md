@@ -376,7 +376,8 @@ bridge the network adapter (Optional)
       gcc \
       linux-headers-`uname -r` \
       libvulkan1 \
-      libglvnd-dev
+      libglvnd-dev \
+      uuid-runtime
 
   cd /root
   git clone https://gitlab.com/polloloco/vgpu-proxmox.git
@@ -410,12 +411,12 @@ bridge the network adapter (Optional)
   mdevctl types
 
   # get from nvidia-smi, drop 4 of the leading 0's
-  export PCI_ADDRESS="0000:04:00.0"
+  export PCI_ADDRESS="0000:01:00.0"
   export DOMAIN=$(echo $PCI_ADDRESS |awk -F: '{print $1}')
   export BUS=$(echo $PCI_ADDRESS |awk -F: '{print $2}')
   export SLOT=$(echo $PCI_ADDRESS |awk -F: '{print $3}' |awk -F. '{print $1}')
   export FUNCTION=$(echo $PCI_ADDRESS |awk -F. '{print $2}')
-  export TYPE="nvidia-18"
+  export TYPE="nvidia-156"
 
   /usr/lib/nvidia/sriov-manage -e $PCI_ADDRESS
   cd /sys/bus/pci/devices/$DOMAIN\:$BUS\:$SLOT.$FUNCTION/mdev_supported_types/
@@ -423,9 +424,12 @@ bridge the network adapter (Optional)
   # get names
   /usr/bin/cat nvidia-*/name
 
-  # get directory for desired card type
-  export CARD="M60-2Q"
-  export DIRECTORY=$(grep -l $CARD nvidia-*/name |awk -F/ '{print $1}')
+  # Get directory for desired card type
+  # Q profiles can give you horrible performance in OpenGL applications/games. To fix that, switch to an equivalent A or B profile (for example GRID RTX6000-4B)
+  # C profiles (for example GRID RTX6000-4C) only work on Linux, don't try using those on Windows, it will not work - at all.
+  # A profiles (for example GRID RTX6000-4A) will NOT work on Linux, they only work on Windows.
+  export CARD="GRID P40-2B"
+  export DIRECTORY=$(grep -l -w "$CARD" nvidia-*/name |awk -F/ '{print $1}')
 
   # Check how many instances are available
   /usr/bin/cat $DIRECTORY/available_instances
