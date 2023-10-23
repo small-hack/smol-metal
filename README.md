@@ -273,18 +273,16 @@ bridge the network adapter (Optional)
     ```bash
     mkdir client && cd client
     wg genkey | tee privatekey | wg pubkey > publickey
-    export PUBLIC_KEY=$(cat ../publickey)
-    export PRIVATE_KEY=$(cat ../privatekey)
-    export SERVER_PUBLIC_IP="85.10.207.26"
+    export SERVER_PUBLIC_KEY=$(cat ../publickey)
+    export CLIENT_PRIVATE_KEY=$(cat privatekey)
+    export SERVER_PUBLIC_IP="128.140.72.118"
     export SERVER_PORT="51820"
     export IP_ADDRESS="10.2.0.2"
-    export DNS_SERVER="192.168.50.50"
 
     cat << EOF > wg0.conf
     [Interface]
     PrivateKey = ${PRIVATE_KEY}
     Address = ${IP_ADDRESS}/24
-    DNS = ${DNS_SERVER}
 
     [Peer]
     PublicKey = ${SERVER_PUBLIC_KEY}
