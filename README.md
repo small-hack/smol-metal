@@ -273,8 +273,8 @@ bridge the network adapter (Optional)
     ```bash
     mkdir client && cd client
     wg genkey | tee privatekey | wg pubkey > publickey
-    export PUBLIC_KEY=$(cat ./publickey)
-    export PRIVATE_KEY=$(cat ./privatekey)
+    export PUBLIC_KEY=$(cat ../publickey)
+    export PRIVATE_KEY=$(cat ../privatekey)
     export SERVER_PUBLIC_IP="85.10.207.26"
     export SERVER_PORT="51820"
     export IP_ADDRESS="10.2.0.2"
