@@ -163,9 +163,9 @@ Notes: Enter your comments here...
 <PlainText>true</PlainText>
 </Password>
 <Description></Description>
-<DisplayName>runner</DisplayName>
+<DisplayName>admin</DisplayName>
 <Group>Administrators</Group>
-<Name>runner</Name>
+<Name>admin</Name>
 </LocalAccount>
 </LocalAccounts>
 </UserAccounts>
