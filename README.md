@@ -195,6 +195,19 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
    docker compose version
    ```
 
+5. Disable sleep
+
+  ```bash
+  sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+  ```
+
+6. set open files limits
+  
+  ```bash
+  sudo sysctl fs.inotify.max_user_instances=1280
+  sudo sysctl fs.inotify.max_user_watches=655360
+  ```
+
 ## Networking
 
 bridge the network adapter (Optional)
