@@ -130,6 +130,11 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       sudo chmod +x /usr/bin/yq && \
       sudo systemctl enable fail2ban && \
       sudo systemctl start fail2ban
+
+    # VM guest utils
+    apt update && apt -y install qemu-guest-agent && \
+    systemctl enable qemu-guest-agent
+    systemctl start qemu-guest-agent
     ```
     
     Prometheus (Run this as root)
