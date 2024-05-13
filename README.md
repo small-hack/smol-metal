@@ -135,6 +135,12 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     apt update && apt -y install qemu-guest-agent && \
     systemctl enable qemu-guest-agent
     systemctl start qemu-guest-agent
+
+    # Optional Go + Seaweedfs cli
+    wget https://go.dev/dl/go1.22.3.linux-amd64.tar.gz
+    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.3.linux-amd64.tar.gz
+    echo "export PATH=$PATH:/usr/local/go/bin:/usr/bin" >> /home/friend/.bash_profile
+    go install -x github.com/seaweedfs/seaweedfs/weed@latest
     ```
     
     Prometheus (Run this as root)
