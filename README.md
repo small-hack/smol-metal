@@ -142,6 +142,10 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     echo "export PATH=$PATH:/usr/local/go/bin:/usr/bin" >> /home/friend/.bash_profile
     sudo -u friend -i go install -x github.com/seaweedfs/seaweedfs/weed@latest
     mv /home/friend/go/bin/weed /usr/local/bin/
+    mkdir /home/friend/shared
+    sudo weed mount -filer=seaweedfs-filer.seaweedfs.svc.cluster.local:8888 \
+      -dir=/home/friend/shared \
+      -filer.path=/friend -volumeServerAccess=filerProxy
 
     # Optional Basic Desktop
     DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y xinit xorg firefox-esr icewm xfe dbus-x11
