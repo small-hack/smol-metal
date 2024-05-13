@@ -142,6 +142,10 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     echo "export PATH=$PATH:/usr/local/go/bin:/usr/bin" >> /home/friend/.bash_profile
     sudo -u friend -i go install -x github.com/seaweedfs/seaweedfs/weed@latest
     mv /home/friend/go/bin/weed /usr/local/bin/
+
+    # Optional Basic Desktop
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y xinit xorg firefox-esr icewm xfe dbus-x11
+    echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
     ```
     
     Prometheus (Run this as root)
