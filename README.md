@@ -140,7 +140,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     wget https://go.dev/dl/go1.22.3.linux-amd64.tar.gz
     rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.3.linux-amd64.tar.gz
     echo "export PATH=$PATH:/usr/local/go/bin:/usr/bin" >> /home/friend/.bash_profile
-    go install -x github.com/seaweedfs/seaweedfs/weed@latest
+    sudo -u friend -i go install -x github.com/seaweedfs/seaweedfs/weed@latest
+    mv /home/friend/go/bin/weed /usr/local/bin/
     ```
     
     Prometheus (Run this as root)
