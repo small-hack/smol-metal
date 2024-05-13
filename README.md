@@ -145,11 +145,17 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     mkdir /home/friend/shared
     sudo weed mount -filer=seaweedfs-filer.seaweedfs.svc.cluster.local:8888 \
       -dir=/home/friend/shared \
-      -filer.path=/friend -volumeServerAccess=filerProxy
+      -filer.path=/friend/shared -volumeServerAccess=filerProxy
 
     # Optional Basic Desktop
-    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y xinit xorg firefox-esr icewm xfe dbus-x11
-    echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
+      xinit \
+      xorg \
+      firefox-esr \
+      icewm \
+      xfe \
+      dbus-x11 && \
+      echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
     ```
     
     Prometheus (Run this as root)
