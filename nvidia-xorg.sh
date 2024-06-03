@@ -31,13 +31,7 @@ sudo ln -snf /dev/ptmx /dev/tty7
 # Start DBus without systemd
 sudo /etc/init.d/dbus start
 
-# Allow starting Xorg from a pseudoterminal instead of strictly on a tty console
-if [ ! -f /etc/X11/Xwrapper.config ]; then
-    echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
-fi
-if grep -Fxq "allowed_users=console" /etc/X11/Xwrapper.config; then
-  sudo sed -i "s/allowed_users=console/allowed_users=anybody/;$ a needs_root_rights=yes" /etc/X11/Xwrapper.config
-fi
+echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
 
 # Remove existing Xorg configuration
 if [ -f "/etc/X11/xorg.conf" ]; then
@@ -88,12 +82,3 @@ echo -e "Section \"ServerFlags\"\n    Option \"AutoAddGPU\" \"false\"\nEndSectio
 
 # Default display is :0 across the container
 export DISPLAY=":0"
-# Run Xorg server with required extensions
-Xorg vt7 -noreset -novtswitch -sharevts -dpi "${DPI}" +extension "GLX" +extension "RANDR" +extension "RENDER" +extension "MIT-SHM" "${DISPLAY}" &
-
-# Wait for X11 to start
-echo "Waiting for X socket"
-until [ -S "/tmp/.X11-unix/X${DISPLAY/:/}" ]; do sleep 1; done
-echo "X socket is ready"
-
-echo "Session Running."
