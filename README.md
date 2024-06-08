@@ -41,6 +41,11 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 - Install deired kernel and headers
 
   ```bash
+  wget https://snapshot.debian.org/archive/debian-security/20230810T202848Z/pool/updates/main/l/linux/linux-headers-6.1.0-11-common_6.1.38-3_all.deb
+
+  wget https://snapshot.debian.org/archive/debian-security/20230810T202848Z/pool/updates/main/l/linux/linux-image-6.1.0-11-amd64-dbg_6.1.38-3_amd64.deb
+  sudo apt-get install -f ./linux-image-6.1.0-11-amd64-dbg_6.1.38-3_amd64.deb
+  
   apt-get install -y linux-image-6.1.0-11-amd64 linux-headers-6.1.0-11-amd64
   ```
 
