@@ -160,8 +160,10 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       xinit \
       xorg \
       firefox-esr \
-      icewm \
-      xfe \
+      # icewm \
+      xfce4 \
+      xfce4-goodies \
+      x11-utils \
       dbus-x11 && \
       echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
     ```
