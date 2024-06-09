@@ -20,6 +20,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 
   deb http://deb.debian.org/debian bookworm-backports main
   deb http://deb.debian.org/debian bullseye-backports main
+
+  deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
   EOF
   
   apt-get update && \
@@ -29,24 +31,24 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   reboot
   ```
 
-## Install a specific kernel
+## Install Proxmox kernel
 
 - List available kernels
   
   ```bash
+  # standard debian 
   apt list linux-*image-*
   apt list linux-*headers-*
+
+  # proxmox
+  apt list pve-kernel-*
   ```
 
 - Install deired kernel and headers
 
   ```bash
-  wget https://snapshot.debian.org/archive/debian-security/20230810T202848Z/pool/updates/main/l/linux/linux-headers-6.1.0-11-common_6.1.38-3_all.deb
-
-  wget https://snapshot.debian.org/archive/debian-security/20230810T202848Z/pool/updates/main/l/linux/linux-image-6.1.0-11-amd64-dbg_6.1.38-3_amd64.deb
-  sudo apt-get install -f ./linux-image-6.1.0-11-amd64-dbg_6.1.38-3_amd64.deb
-  
-  apt-get install -y linux-image-6.1.0-11-amd64 linux-headers-6.1.0-11-amd64
+  apt-get install pve-kernel-6.2/stable
+  apt-get install pve-headers-6.2
   ```
 
 - Donwload meta package from source if its not in the apt list
@@ -68,9 +70,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 - prevent changes
 
   ```bash
-  sudo apt-mark hold linux-image-amd64
-  sudo apt-mark hold linux-image-6.1.0-11-amd64
-  sudo apt-mark hold linux-headers-6.1.0-11-amd64
+  sudo apt-mark hold pve-kernel-6.2/stable
+  sudo apt-mark hold pve-headers-6.2
   ```
 - reboot
 
