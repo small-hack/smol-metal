@@ -8,6 +8,8 @@ The steps below setup the system to be further controlled by ansible. Eventually
 Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   
   ```bash
+  wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+
   cat << EOF > /etc/apt/sources.list
   deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
   deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
