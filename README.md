@@ -455,7 +455,7 @@ bridge the network adapter (Optional)
       firmware-misc-nonfree \
       linux-headers-amd64 \
       gcc \
-      linux-headers-`uname -r` \
+      make \
       libvulkan1 \
       libglvnd-dev \
       uuid-runtime
