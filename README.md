@@ -198,8 +198,47 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       xfce4 \
       xfce4-goodies \
       x11-utils \
+      x11vnc \
+      xvfb \
       dbus-x11 && \
       echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
+
+    # Install sunhine
+    export VERSION="v0.23.1"
+    export PLATFORM="debian-bookworm"
+    export ARCH="amd64.deb"
+    export REPO="LizardByte/Sunshine/"
+    wget https://github.com/$REPO/releases/download/$VERSION/sunshine-$PLATFORM-$ARCH
+    apt-get isntall -f ./sunshine-$PLATFORM-$ARCH
+
+    echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"' | \
+    sudo tee /etc/udev/rules.d/60-sunshine.rules
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+    sudo modprobe uinput
+    sudo setcap -r $(readlink -f $(which sunshine))
+
+    mkdir -p /home/friend/.config/systemd/user
+    
+    cat << EOF > /home/friend/.config/systemd/user/sunshine.service
+    [Unit]
+    Description=Sunshine self-hosted game stream host for Moonlight.
+    StartLimitIntervalSec=500
+    StartLimitBurst=5
+
+    [Service]
+    ExecStart=<see table>
+    Restart=on-failure
+    RestartSec=5s
+    #Flatpak Only
+    #ExecStop=flatpak kill dev.lizardbyte.sunshine
+
+    [Install]
+    WantedBy=graphical-session.target
+    EOF
+
+    systemctl --user enable sunshine
+    systemctl --user start sunshine
     ```
     
     Prometheus (Run this as root)
