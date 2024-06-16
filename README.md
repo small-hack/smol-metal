@@ -534,8 +534,21 @@ bridge the network adapter (Optional)
   cd /opt/vgpu_unlock-rs/
   cargo build --release
 
+  # Create a vgpu profile
   mkdir /etc/vgpu_unlock
   touch /etc/vgpu_unlock/profile_override.toml
+
+  cat << EOF > /etc/vgpu_unlock/profile_override.toml
+  [profile.nvidia-18]
+  num_displays = 1
+  display_width = 1920
+  display_height = 1080
+  max_pixels = 2073600
+  cuda_enabled = 1
+  frl_enabled = 0
+  framebuffer = 0x1DC000000
+  framebuffer_reservation = 0x24000000
+  EOF
 
   mkdir /etc/systemd/system/{nvidia-vgpud.service.d,nvidia-vgpu-mgr.service.d}
   echo -e "[Service]\nEnvironment=LD_PRELOAD=/opt/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" > /etc/systemd/system/nvidia-vgpud.service.d/vgpu_unlock.conf
@@ -553,12 +566,12 @@ bridge the network adapter (Optional)
   mdevctl types
 
   # get from nvidia-smi, drop 4 of the leading 0's
-  export PCI_ADDRESS="0000:01:00.0"
+  export PCI_ADDRESS="0000:04:00.0"
   export DOMAIN=$(echo $PCI_ADDRESS |awk -F: '{print $1}')
   export BUS=$(echo $PCI_ADDRESS |awk -F: '{print $2}')
   export SLOT=$(echo $PCI_ADDRESS |awk -F: '{print $3}' |awk -F. '{print $1}')
   export FUNCTION=$(echo $PCI_ADDRESS |awk -F. '{print $2}')
-  export TYPE="nvidia-156"
+  export TYPE="nvidia-18"
 
   /usr/lib/nvidia/sriov-manage -e $PCI_ADDRESS
   cd /sys/bus/pci/devices/$DOMAIN\:$BUS\:$SLOT.$FUNCTION/mdev_supported_types/
