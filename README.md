@@ -227,7 +227,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     StartLimitBurst=5
 
     [Service]
-    ExecStart=DISPLAY=:0;/usr/bin/sunshine
+    ExecStart=/usr/bin/sunshine
     Restart=on-failure
     RestartSec=5s
     #Flatpak Only
@@ -237,6 +237,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     WantedBy=graphical-session.target
     EOF
 
+    sudo chown -R friend:friend /home/friend/.config
     systemctl --user enable sunshine
     systemctl --user start sunshine
     ```
