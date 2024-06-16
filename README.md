@@ -227,7 +227,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     StartLimitBurst=5
 
     [Service]
-    ExecStart=<see table>
+    ExecStart=/usr/bin/sunshine
     Restart=on-failure
     RestartSec=5s
     #Flatpak Only
