@@ -8,8 +8,6 @@ The steps below setup the system to be further controlled by ansible. Eventually
 Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   
   ```bash
-  wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
-
   cat << EOF > /etc/apt/sources.list
   deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
   deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
@@ -22,8 +20,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
 
   deb http://deb.debian.org/debian bookworm-backports main
   deb http://deb.debian.org/debian bullseye-backports main
-
-  deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
   EOF
   
   apt-get update && \
@@ -46,11 +42,49 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   apt list pve-kernel-*
   ```
 
-- Install deired kernel and headers
+- Installing proxmox pve kernel and headers on debian
 
   ```bash
+  wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+
+  cat << EOF > /etc/apt/sources.list
+  deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+  deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+
+  deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+  deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+
+  deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+  deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+
+  deb http://deb.debian.org/debian bookworm-backports main
+  deb http://deb.debian.org/debian bullseye-backports main
+
+  deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+  EOF
+  
+  apt-get update 
   apt-get install pve-kernel-6.2/stable
   apt-get install pve-headers-6.2
+
+
+  cat << EOF > /etc/apt/sources.list
+  deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+  deb-src http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+
+  deb http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+  deb-src http://deb.debian.org/debian-security/ bookworm-security main contrib non-free
+
+  deb http://deb.debian.org/debian bookworm-updates main contrib non-free
+  deb-src http://deb.debian.org/debian bookworm-updates main contrib non-free
+
+  deb http://deb.debian.org/debian bookworm-backports main
+  deb http://deb.debian.org/debian bullseye-backports main
+  
+  EOF
+
+  apt-get remove apparmor
+  apt-get install apparmor
   ```
 
 - Donwload meta package from source if its not in the apt list
