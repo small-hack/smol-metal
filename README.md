@@ -619,12 +619,19 @@ bridge the network adapter (Optional)
   openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout  $WORKING_DIR/webserver.key -out $WORKING_DIR/webserver.crt
 
   # start license server
-  docker run -e DLS_URL=<HOST IP ADDRESS> -e DLS_PORT=443 -p 443:443 -v $WORKING_DIR:/app/cert -v dls-db:/app/database collinwebdesigns/fastapi-dls:latest
+  docker run -e DLS_URL=<HOST IP> -e DLS_PORT=443 -p 443:443 -v $WORKING_DIR:/app/cert -v dls-db:/app/database collinwebdesigns/fastapi-dls:latest
   ```
 
   On the client
   ```bash
-  wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://<dls-hostname-or-ip>/-/client-token
+
+  cat << EOF > /etc/nvidia/gridd.conf
+  ServerAddress="https://vgpu.buildstars.online"
+  ServerPort=443
+  FeatureType=0
+  EOF
+
+  wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://vgpu.buildstars.online/-/client-token
 
   service nvidia-gridd restart
   nvidia-smi -q | grep "License"
