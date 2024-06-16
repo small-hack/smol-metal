@@ -240,6 +240,27 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     sudo chown -R friend:friend /home/friend/.config
     systemctl --user enable sunshine
     systemctl --user start sunshine
+
+    # Install nicedcv
+    export FILE_NAME="nice-dcv-2023.1-16388-ubuntu2204-x86_64"
+    wget https://d1uj6qtbmh3dt5.cloudfront.net/2023.1/Servers/$FILE_NAME.tgz
+    tar -xvzf $FILE_NAME.tgz
+    sudo apt-get install -y -f ./$FILE_NAME/*.deb
+
+    sudo usermod -aG video dcv
+    sudo sed -ie 's/#owner = ""/owner = "friend"/' /etc/dcv/dcv.conf
+    sudo sed -ie 's/"1"/"0"/g' /etc/apt/apt.conf.d/20auto-upgrades
+    sudo systemctl isolate multi-user.target
+    sudo dcvgladmin enable
+    sudo systemctl isolate graphical.target
+    sudo dcvgldiag
+    sudo systemctl enable dcvserver
+    sudo systemctl start dcvserver
+
+    dcv list-sessions
+    
+    
+    
     ```
     
     Prometheus (Run this as root)
