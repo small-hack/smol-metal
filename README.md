@@ -669,6 +669,12 @@ bridge the network adapter (Optional)
 
   On the client
   ```bash
+  wget https://f004.backblazeb2.com/file/buildstar-public-share/guest/NVIDIA-Linux-x86_64-535.54.03-grid.run
+  sudo bash NVIDIA-Linux-x86_64-535.54.03-grid.run \
+  --compat32-prefix=/usr \
+  --compat32-libdir=lib32 \
+  --dkms \
+  
 
   cat << EOF > /etc/nvidia/gridd.conf
   ServerAddress="https://vgpu.buildstars.online"
