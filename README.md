@@ -194,7 +194,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       xinit \
       xorg \
       firefox-esr \
-      # icewm \
       xfce4 \
       xfce4-goodies \
       x11-utils \
