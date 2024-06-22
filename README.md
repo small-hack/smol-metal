@@ -628,21 +628,25 @@ bridge the network adapter (Optional)
   # Q profiles can give you horrible performance in OpenGL applications/games. To fix that, switch to an equivalent A or B profile (for example GRID RTX6000-4B)
   # C profiles (for example GRID RTX6000-4C) only work on Linux, don't try using those on Windows, it will not work - at all.
   # A profiles (for example GRID RTX6000-4A) will NOT work on Linux, they only work on Windows.
-  export CARD="GRID P40-2B"
+  export CARD="GRID M60-2Q"
   export DIRECTORY=$(grep -l -w "$CARD" nvidia-*/name |awk -F/ '{print $1}')
 
   # Check how many instances are available
   /usr/bin/cat $DIRECTORY/available_instances
+  /usr/bin/cat /sys/bus/pci/devices/0000:04:00.0/mdev_supported_types/nvidia-18/available_instances
 
   # Create a card
   export UUID=$(uuidgen)
   echo $UUID > $DIRECTORY/create
+  echo "54c0879c-3ae9-47e1-ad7a-c7657ff8830f" > /sys/bus/pci/devices/0000:04:00.0/mdev_supported_types/nvidia-18/create
 
   # Verify its there
   ls /sys/bus/mdev/devices/$UUID
+  ls /sys/bus/mdev/devices/54c0879c-3ae9-47e1-ad7a-c7657ff8830f
 
   # initialize the card
   sudo mdevctl define --auto --uuid $UUID
+  sudo mdevctl define --auto --uuid 54c0879c-3ae9-47e1-ad7a-c7657ff8830f
 
   # verify mdev has it
   mdevctl list
