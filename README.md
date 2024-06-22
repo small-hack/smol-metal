@@ -681,12 +681,12 @@ bridge the network adapter (Optional)
   
 
   cat << EOF > /etc/nvidia/gridd.conf
-  ServerAddress="https://vgpu.buildstars.online"
+  ServerAddress="license-server-service.vgpu.svc.cluster.local"
   ServerPort=443
   FeatureType=0
   EOF
 
-  wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://vgpu.buildstars.online/-/client-token
+  wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://license-server-service.vgpu.svc.cluster.local/-/client-token
 
   service nvidia-gridd restart
   nvidia-smi -q | grep "License"
