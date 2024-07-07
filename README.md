@@ -376,12 +376,15 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
   ```
 
-6. set open files limits
+6. set open files limits and speed up raid sync
   
   ```bash
   sudo sysctl -w fs.inotify.max_user_watches=2099999999
   sudo sysctl -w fs.inotify.max_user_instances=2099999999
   sudo sysctl -w fs.inotify.max_queued_events=2099999999
+  
+  # As root
+  sudo echo 50000000 > /sys/block/mdX/md/sync_speed_max
   ```
 
 ## Networking
