@@ -167,6 +167,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       ncdu \
       zip \
       unzip \
+      pkg-config \
       iotop && \
       sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
       sudo chmod +x /usr/bin/yq && \
@@ -194,13 +195,14 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       xinit \
       xorg \
       firefox-esr \
-      xfce4 \
+      tasksel \
       xfce4-goodies \
       x11-utils \
       x11vnc \
       xvfb \
       dbus-x11 && \
-      echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null
+      echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null && \
+      tasksel install xfce4-desktop
 
     # Install sunhine
     apt-get install -y --no-install-recommends \
@@ -681,6 +683,7 @@ bridge the network adapter (Optional)
   --compat32-prefix=/usr \
   --compat32-libdir=lib32 \
   --dkms \
+  --silent
   
 
   cat << EOF > /etc/nvidia/gridd.conf
@@ -703,13 +706,13 @@ bridge the network adapter (Optional)
       <summary>Debain Drivers</summary>
   
       ```bash
-      apt-get install -y nvidia-driver \
-      firmware-misc-nonfree \
+      apt-get install -y firmware-misc-nonfree \
       linux-headers-amd64 \
       gcc \
       linux-headers-`uname -r` \
       libvulkan1 \
-      libglvnd-dev
+      libglvnd-dev \
+      nvidia-driver 
       ```
   
     </details>
