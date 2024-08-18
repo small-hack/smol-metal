@@ -255,7 +255,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     export ARCH="amd64.deb"
     export REPO="LizardByte/Sunshine/"
     wget https://github.com/$REPO/releases/download/$VERSION/sunshine-$PLATFORM-$ARCH
-    apt-get isntall -f ./sunshine-$PLATFORM-$ARCH
+    apt-get install -f ./sunshine-$PLATFORM-$ARCH
 
     echo 'KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"' | \
     sudo tee /etc/udev/rules.d/60-sunshine.rules
