@@ -165,6 +165,7 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       open-iscsi \
       nfs-common \
       ncdu \
+      bc \
       zip \
       unzip \
       pkg-config \
