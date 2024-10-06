@@ -206,51 +206,6 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       tasksel install xfce4-desktop
 
     # Install sunhine
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake=3.25.* \
-    doxygen \
-    git \
-    graphviz \
-    libayatana-appindicator3-dev \
-    libcap-dev \
-    libcurl4-openssl-dev \
-    libdrm-dev \
-    libevdev-dev \
-    libminiupnpc-dev \
-    libnotify-dev \
-    libnuma-dev \
-    libopus-dev \
-    libpulse-dev \
-    libssl-dev \
-    libva-dev \
-    libvdpau-dev \
-    libwayland-dev \
-    libx11-dev \
-    libxcb-shm0-dev \
-    libxcb-xfixes0-dev \
-    libxcb1-dev \
-    libxfixes-dev \
-    libxrandr-dev \
-    libxtst-dev \
-    nodejs \
-    npm \
-    python3.11 \
-    python3.11-venv \
-    udev \
-    wget \
-    x11-xserver-utils \
-    xvfb
-
-    mkdir -p /build/cuda
-    export CUDA_VERSION="12.0.0"
-    export CUDA_BUILD="525.60.13"
-    cuda_prefix="https://developer.download.nvidia.com/compute/cuda/"
-    url="${cuda_prefix}${CUDA_VERSION}/local_installers/cuda_${CUDA_VERSION}_${CUDA_BUILD}_linux${cuda_suffix}.run"
-    wget "$url" --progress=bar:force:noscroll -q --show-progress -O ./cuda.run
-    chmod a+x ./cuda.run
-    ./cuda.run --toolkit --toolkitpath=/build/cuda --no-opengl-libs --no-man-page --no-drm
-  
     export VERSION="v0.23.1"
     export PLATFORM="debian-bookworm"
     export ARCH="amd64.deb"
@@ -274,14 +229,13 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
     StartLimitBurst=5
 
     [Service]
-    ExecStart=/usr/bin/sunshine
-    Restart=on-failure
+    Restart=always
     RestartSec=5s
-    #Flatpak Only
-    #ExecStop=flatpak kill dev.lizardbyte.sunshine
+    ExecStartPre=/bin/sleep 10
+    ExecStart=/usr/bin/sunshine
 
     [Install]
-    WantedBy=graphical-session.target
+    WantedBy=default.target
     EOF
 
     sudo chown -R friend:friend /home/friend/.config
