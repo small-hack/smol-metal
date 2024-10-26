@@ -558,15 +558,12 @@ bridge the network adapter (Optional)
 
   # 2080ti
   cat << EOF > /etc/vgpu_unlock/profile_override.toml
-  [profile.nvidia-18]
-  num_displays = 1
-  display_width = 1920
-  display_height = 1080
-  max_pixels = 2073600
+  [profile.nvidia-259]
   cuda_enabled = 1
   frl_enabled = 0
-  framebuffer = 0x1DC000000
-  framebuffer_reservation = 0x24000000
+  framebuffer = 0x128000000
+  framebuffer_reservation = 0x18000000
+  vgpu_type = "NVS"
   EOF
 
   mkdir /etc/systemd/system/{nvidia-vgpud.service.d,nvidia-vgpu-mgr.service.d}
