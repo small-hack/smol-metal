@@ -543,6 +543,20 @@ bridge the network adapter (Optional)
   mkdir /etc/vgpu_unlock
   touch /etc/vgpu_unlock/profile_override.toml
 
+  # M60
+  cat << EOF > /etc/vgpu_unlock/profile_override.toml
+  [profile.nvidia-18]
+  num_displays = 1
+  display_width = 1920
+  display_height = 1080
+  max_pixels = 2073600
+  cuda_enabled = 1
+  frl_enabled = 0
+  framebuffer = 0x1DC000000
+  framebuffer_reservation = 0x24000000
+  EOF
+
+  # 2080ti
   cat << EOF > /etc/vgpu_unlock/profile_override.toml
   [profile.nvidia-18]
   num_displays = 1
@@ -559,19 +573,30 @@ bridge the network adapter (Optional)
   echo -e "[Service]\nEnvironment=LD_PRELOAD=/opt/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" > /etc/systemd/system/nvidia-vgpud.service.d/vgpu_unlock.conf
   echo -e "[Service]\nEnvironment=LD_PRELOAD=/opt/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" > /etc/systemd/system/nvidia-vgpu-mgr.service.d/vgpu_unlock.conf
 
-  download driver
+  # download driver M60
   wget https://f004.backblazeb2.com/file/buildstar-public-share/NVIDIA-GRID-Linux-KVM-535.54.06-535.54.03-536.25.zip
   unzip NVIDIA-GRID-Linux-KVM-535.54.06-535.54.03-536.25.zip
   cd Host_Drivers
   chmod +x NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run
   ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/535.54.06.patch
   ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm-custom.run --dkms
-
+  
+  # download driver 2080ti
+  wget https://f004.backblazeb2.com/file/buildstar-public-share/NVIDIA-GRID-Linux-KVM-550.90.05-550.90.07-552.74.zip
+  unzip NVIDIA-GRID-Linux-KVM-550.90.05-550.90.07-552.74.zip
+  cd Host_Drivers
+  chmod +x NVIDIA-Linux-x86_64-550.90.05-vgpu-kvm.run
+  ./NVIDIA-Linux-x86_64-550.90.05-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/550.90.05.patch
+  ./NVIDIA-Linux-x86_64-550.90.05-vgpu-kvm-custom.run --dkms
+  
   reboot
   mdevctl types
 
   # get from nvidia-smi, drop 4 of the leading 0's
+  # M60
   export PCI_ADDRESS="0000:04:00.0"
+  # 2080ti
+  export PCI_ADDRESS="0000:01:00.0"
   export DOMAIN=$(echo $PCI_ADDRESS |awk -F: '{print $1}')
   export BUS=$(echo $PCI_ADDRESS |awk -F: '{print $2}')
   export SLOT=$(echo $PCI_ADDRESS |awk -F: '{print $3}' |awk -F. '{print $1}')
