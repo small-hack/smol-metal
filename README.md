@@ -169,7 +169,8 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       zip \
       unzip \
       pkg-config \
-      iotop && \
+      iotop \
+      pipx && \
       sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
       sudo chmod +x /usr/bin/yq && \
       sudo systemctl enable fail2ban && \
@@ -201,7 +202,9 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
       x11-utils \
       x11vnc \
       xvfb \
-      dbus-x11 && \
+      dbus-x11 \
+      accountsservice \
+      xfce4 && \
       echo -e "allowed_users=anybody\nneeds_root_rights=yes" | sudo tee /etc/X11/Xwrapper.config > /dev/null && \
       tasksel install xfce4-desktop
 
