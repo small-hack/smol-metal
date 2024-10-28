@@ -576,7 +576,7 @@ bridge the network adapter (Optional)
   cd Host_Drivers
   chmod +x NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run
   ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/535.54.06.patch
-  ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm-custom.run --dkms
+  ./NVIDIA-Linux-x86_64-535.54.06-vgpu-kvm-custom.run -dkms
   
   # download driver 2080ti
   wget https://f004.backblazeb2.com/file/buildstar-public-share/NVIDIA-GRID-Linux-KVM-550.90.05-550.90.07-552.74.zip
@@ -584,7 +584,7 @@ bridge the network adapter (Optional)
   cd Host_Drivers
   chmod +x NVIDIA-Linux-x86_64-550.90.05-vgpu-kvm.run
   ./NVIDIA-Linux-x86_64-550.90.05-vgpu-kvm.run --apply-patch ~/vgpu-proxmox/550.90.05.patch
-  ./NVIDIA-Linux-x86_64-550.90.05-vgpu-kvm-custom.run --dkms
+  ./NVIDIA-Linux-x86_64-550.90.05-vgpu-kvm-custom.run -m kernel -dkms
   
   reboot
   mdevctl types
