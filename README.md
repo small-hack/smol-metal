@@ -591,6 +591,11 @@ bridge the network adapter (Optional)
   
   reboot
   mdevctl types
+  
+  # on a5000/a6000:
+  export bus=$(nvidia-smi -q |grep ^GPU |awk -F " 0000" '{print tolower($2)}')
+  sudo /usr/lib/nvidia/sriov-manage -e $bus
+  mdevctl types
 
   # get from nvidia-smi, drop 4 of the leading 0's
   # M60
