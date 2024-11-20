@@ -38,6 +38,6 @@ tar xzf "./${runner_file}"
   --unattended \
   --ephemeral
 
-./svc.sh install
-./svc.sh start
-./svc.sh status
+sudo ./svc.sh install
+sudo ./svc.sh start
+sudo ./svc.sh status
