@@ -37,7 +37,3 @@ tar xzf "./${runner_file}"
   --token ${RUNNER_TOKEN} \
   --unattended \
   --ephemeral
-
-sudo ./svc.sh install
-sudo ./svc.sh start
-sudo ./svc.sh status
