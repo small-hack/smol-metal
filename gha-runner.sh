@@ -12,6 +12,9 @@ repo=$2
 # Access token
 token=$3
 
+# Runner Name
+name=$4
+
 # Runner platform
 runner_plat=linux
 
@@ -36,4 +39,5 @@ tar xzf "./${runner_file}"
 ./config.sh --url https://github.com/${owner}/${repo} \
   --token ${RUNNER_TOKEN} \
   --unattended \
-  --ephemeral
+  --ephemeral \
+  --name $name
