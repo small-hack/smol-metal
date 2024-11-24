@@ -19,7 +19,7 @@ name=$(uuidgen)
 runner_plat=linux
 
 # Get a authorized token for your repo/org
-export RUNNER_TOKEN=$(curl -s -X POST ${base_api_url}/repos/${owner}/${repo}/actions/runners/registration-token -H "accept: application/vnd.github.everest-preview+json" -H "authorization: token ${token}" | jq -r '.token')
+export RUNNER_TOKEN=$(curl -s -X POST ${base_api_url}/orgs/${owner}/actions/runners/registration-token -H "accept: application/vnd.github.everest-preview+json" -H "authorization: token ${token}" | jq -r '.token')
 
 # Find the latest version of the runner software
 latest_version_label=$(curl -s -X GET 'https://api.github.com/repos/actions/runner/releases/latest' | jq -r '.tag_name')
