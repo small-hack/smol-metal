@@ -32,8 +32,8 @@ runner_file="actions-runner-${runner_plat}-x64-${latest_version}.tar.gz"
 runner_url="https://github.com/actions/runner/releases/download/${latest_version_label}/${runner_file}"
 
 # Download and extract the archive
-wget -O ${runner_file} ${runner_url}
-tar xzf "./${runner_file}"
+sudo wget -O ${runner_file} ${runner_url}
+sudo tar xzf "./${runner_file}"
 
 # Install and configure the application without prompting for user-input
 ./config.sh --url https://github.com/${owner}/${repo} \
