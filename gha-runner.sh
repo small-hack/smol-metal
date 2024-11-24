@@ -13,7 +13,7 @@ repo=$2
 token=$3
 
 # Runner Name
-name=$4
+name=$(uuidgen)
 
 # Runner platform
 runner_plat=linux
