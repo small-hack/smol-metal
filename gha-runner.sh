@@ -36,7 +36,7 @@ sudo wget -O ${runner_file} ${runner_url}
 sudo tar xzf "./${runner_file}"
 
 # Install and configure the application without prompting for user-input
-./config.sh --url https://github.com/${owner}/${repo} \
+./config.sh --url https://github.com/${owner} \
   --token ${RUNNER_TOKEN} \
   --unattended \
   --ephemeral \
