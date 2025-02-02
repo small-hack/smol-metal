@@ -663,8 +663,8 @@ bridge the network adapter (Optional)
 
   On the client
   ```bash
-  wget https://f004.backblazeb2.com/file/buildstar-public-share/guest/NVIDIA-Linux-x86_64-535.54.03-grid.run
-  sudo bash NVIDIA-Linux-x86_64-535.54.03-grid.run \
+  wget https://buildstars.online/guest/NVIDIA-Linux-x86_64-550.90.07-grid.run
+  sudo bash NVIDIA-Linux-x86_64-550.90.07-grid.run \
   --compat32-prefix=/usr \
   --compat32-libdir=lib32 \
   --dkms \
@@ -672,12 +672,12 @@ bridge the network adapter (Optional)
   
 
   cat << EOF > /etc/nvidia/gridd.conf
-  ServerAddress="license-server-service.vgpu.svc.cluster.local"
+  ServerAddress="vgpu.buildstars.online"
   ServerPort=443
   FeatureType=0
   EOF
 
-  wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://license-server-service.vgpu.svc.cluster.local/-/client-token
+  wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://vgpu.buildstars.online/-/client-token
 
   service nvidia-gridd restart
   nvidia-smi -q | grep "License"
