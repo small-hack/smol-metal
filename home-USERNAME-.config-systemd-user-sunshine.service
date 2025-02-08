@@ -4,9 +4,10 @@ StartLimitIntervalSec=500
 StartLimitBurst=5
 
 [Service]
-ExecStart=/usr/bin/sunshine
-Restart=on-failure
+Restart=always
 RestartSec=5s
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/sunshine
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=default.target
