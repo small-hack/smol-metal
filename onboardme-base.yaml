@@ -366,6 +366,12 @@ cloudinit:
   extraEnvVars:
     - name: USERNAME
       value: friend
+    - name: PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: friend-password
+          key: "password"
+
   # -- virtual-machine hostname
   hostname: onboardme
   # -- namespace in which to create resources
@@ -441,9 +447,6 @@ cloudinit:
     - path: /etc/default/keyboard
       url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/etc-default-keyboard
       permissions: '0644'
-    - path: /home/${USERNAME}/.config/systemd/user/sunshine.service
-      url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/home-USERNAME-.config-systemd-user-sunshine.service
-      permissions: '0644'
     - path: /home/${USERNAME}/runner.sh
       url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/gha-runner.sh
       permissions: '0644'
@@ -484,7 +487,65 @@ cloudinit:
     - path: /etc/environment
       permissions: '0644'
       url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/environmment.txt
-      # -- Update, upgrade, and install packages
+    - path: /etc/systemd/system/startx.service
+      permissions: '0644'
+      content: |-
+        [Unit]
+        Description=Starts Xsession
+
+        [Service]
+        Type=simple
+        ExecStart=/usr/bin/Xorg vt7 -noreset -novtswitch -sharevts -dpi 96 +extension GLX +extension RANDR +extension RENDER +extension MIT-SHM :0
+
+        [Install]
+        WantedBy=multi-user.target
+    - path: /etc/systemd/system/startx11vnc.service
+      permissions: '0644'
+      content: |-
+        [Unit]
+        Description=Startx X11vnc
+
+        [Service]
+        Type=simple
+        ExecStart=/usr/bin/x11vnc -display :0 -shared -loop -repeat -xkb -snapfb -threads -xrandr resize -passwd "${PASSWD}" -rfbport 5900
+
+        [Install]
+        WantedBy=multi-user.target
+    - path: /home/${USERNAME}/.confg/systemd/user/desktop.service
+      permissions: '0644'
+      content: |-
+        [Unit]
+        Description=Start XFCE4 Session
+        Wants=graphical-session.target
+
+        [Service]
+        Environment=DISPLAY=:0
+        Environment=XAUTHORITY=/home/${USERNAME}/.Xauthority
+        ExecStart=/usr/bin/xfce4-session
+        Restart=always
+
+        [Install]
+        WantedBy=default.target
+    - path: /home/${USERNAME}/.confg/systemd/user/sunshine.service
+      permissions: '0644'
+      content: |-
+        [Unit]
+        Description=Sunshine self-hosted game stream host for Moonlight.
+        StartLimitIntervalSec=500
+        StartLimitBurst=5
+        Wants=graphical-session.target
+
+        [Service]
+        Restart=always
+        RestartSec=5s
+        Environment=DISPLAY=:0
+        Environment=XAUTHORITY=/home/${USERNAME}/.Xauthority
+        ExecStartPre=/bin/sleep 10
+        ExecStart=/usr/bin/sunshine
+
+        [Install]
+        WantedBy=default.target
+  # -- Update, upgrade, and install packages
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#package-update-upgrade-install
   package_reboot_if_required: true
   package_update: true
@@ -600,8 +661,12 @@ cloudinit:
     - sudo udevadm trigger
     - sudo modprobe uinput
     - sudo setcap -r $(readlink -f $(which sunshine))
+    ######################
+    # Enable system services
+    - sudo systemctl enable startx.service
+    - sudo systemctl enable startx11vnc.service
+    - sudo systemctl --user -M ${USERNAME}@ enable desktop.service
     - sudo systemctl --user -M ${USERNAME}@ enable sunshine.service
-    - sudo systemctl --user -M ${USERNAME}@ start sunshine.service
     - reboot now
 ################################################################################
 # ____                  _             ___     ___
