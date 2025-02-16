@@ -6,7 +6,7 @@
 ###############################################################################
 virtualMachine:
   # -- name of the virtualMachine or virtualMachinePool object
-  name: test
+  name: desktop
   # -- namespace to deploy to
   namespace: kubevirt
   # -- Create the VM as a KubevirtMachineTemplate for use with Cluster API
@@ -157,28 +157,28 @@ virtualMachinePool:
 diskErrorPolicy: "report"
 # -- List of disks to create for the VM, Will be used to create Datavolumes or PVCs.
 disks:
-  #################################################
-  # DataVolume disk with URL source example
-  #################################################
-  - name: onboardme-base
-    # -- Disk type: disk, cdrom, filesystem, or lun
-    type: disk
-    # -- Bus type: sata or virtio
-    bus: virtio
-    # -- Sets disk position in boot order, lower numbers are checked earlier
-    bootorder: 2
-    # -- Set disk to be Read-only
-    readonly: false
-    # -- Size of disk in GB
-    pvsize: 24Gi
-    # -- Storage class to use for the pvc
-    pvstorageClassName: local-path
-    # -- Access mode for the PVC
-    pvaccessMode: ReadWriteOnce
-    # -- source type of the disk image. One of `url`, `pvc`
-    source: url
-    # -- URL of cloud-image
-    url: "https://buildstars.online/debian-12-generic-amd64-daily.qcow2"
+  #  #################################################
+  #  # DataVolume disk with URL source example
+  #  #################################################
+  #  - name: harddrive
+  #    # -- Disk type: disk, cdrom, filesystem, or lun
+  #    type: disk
+  #    # -- Bus type: sata or virtio
+  #    bus: virtio
+  #    # -- Sets disk position in boot order, lower numbers are checked earlier
+  #    bootorder: 2
+  #    # -- Set disk to be Read-only
+  #    readonly: false
+  #    # -- Size of disk in GB
+  #    pvsize: 24Gi
+  #    # -- Storage class to use for the pvc
+  #    pvstorageClassName: local-path
+  #    # -- Access mode for the PVC
+  #    pvaccessMode: ReadWriteOnce
+  #    # -- source type of the disk image. One of `url`, `pvc`
+  #    source: url
+  #    # -- URL of cloud-image
+  #    url: "https://buildstars.online/debian-12-generic-amd64-daily.qcow2"
 #########################################################
 # Ephemeral disk example
 # no persistance, these are deleted after the VM exits
@@ -196,18 +196,18 @@ disks:
 ########################################################
 # DataVolume disk with existing PVC source example
 ########################################################
-# - name: harddrive
-#   type: disk
-#   bus: virtio
-#   bootorder: 2
-#   readonly: false
-#   pvsize: 64G
-#   pvstorageClassName: local-path
-#   nodePlacement: scremlin
-#   pvaccessMode: ReadWriteOnce
-#   source: pvc
-#   pvcnamespace: kubevirt
-#   pvcname: debian12
+  - name: harddrive
+    type: disk
+    bus: virtio
+    bootorder: 2
+    readonly: false
+    pvsize: 32G
+    pvstorageClassName: local-path
+    nodePlacement: gino
+    pvaccessMode: ReadWriteOnce
+    source: pvc
+    pvcnamespace: kubevirt
+    pvcname: onboardme-base
 
 ##########################################################
 # ISO live-image example
@@ -312,7 +312,7 @@ cloudinit:
   # https://cloudinit.readthedocs.io/en/latest/reference/modules.html
 
   # -- name of secret in which to save the user-data file
-  secret_name: test-scrapmetal-user-data
+  secret_name: desktop-scrapmetal-user-data
   # -- image version
   image: deserializeme/kv-cloud-init:v0.0.1
   # -- Choose weather to create a service-account or not. Once a SA has been created
@@ -366,6 +366,11 @@ cloudinit:
   extraEnvVars:
     - name: USERNAME
       value: friend
+    - name: PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: friend-password
+          key: "password"
 
   # -- virtual-machine hostname
   hostname: onboardme
@@ -403,11 +408,10 @@ cloudinit:
       lock_passwd: false
       # -- set user password from existing secret or generate random
       password:
-        random: true
-      #  random: false
-      #  existingSecret:
-      #    name: admin-password
-      #    key: password
+        random: false
+        existingSecret:
+          name: friend-password
+          key: password
 
       # -- import user ssh public keys from github, gitlab, or launchpad
       # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#ssh
@@ -425,172 +429,89 @@ cloudinit:
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#bootcmd
   boot_cmd:
     - mkdir -p /home/${USERNAME}/.config/systemd/user
+    - sudo systemctl mask systemd-xdg-autostart-generator
   # -- Write arbitrary files to disk.
   # Files my be provided as plain-text or downloaded from a url
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#write-files
   write_files:
-    - path: /etc/apt/sources.list
-      url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/etc-apt-sources.list
-      permissions: '0644'
-    - path: /etc/modprobe.d/nouveau.conf
-      content: |-
-        blacklist nouveau
-      permissions: '0644'
-    - path: /etc/default.locale
-      url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/etc-default-locale
-      permissions: '0644'
-    - path: /etc/default/keyboard
-      url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/etc-default-keyboard
-      permissions: '0644'
     - path: /home/${USERNAME}/runner.sh
       url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/gha-runner.sh
       permissions: '0644'
-    - path: /etc/netplan/99-config.yaml
-      permissions: '0600'
-      content: |-
-        ---
-        network:
-          version: 2
-          renderer: networkd
-          ethernets:
-            enp1s0:
-              dhcp4: true
-              mtu: 1500
-    - path: /etc/nvidia/gridd.conf
+    - path: /etc/systemd/system/startx.service
       permissions: '0644'
       content: |-
-        ServerAddress="vgpu.buildstars.online"
-        ServerPort=443
-        FeatureType=0
-    - path: /etc/X11/Xwrapper.config
+        [Unit]
+        Description=Starts Xsession
+
+        [Service]
+        Type=simple
+        ExecStart=/usr/bin/Xorg vt7 -noreset -novtswitch -sharevts -dpi 96 +extension GLX +extension RANDR +extension RENDER +extension MIT-SHM :0
+
+        [Install]
+        WantedBy=multi-user.target
+    - path: /etc/systemd/system/startx11vnc.service
       permissions: '0644'
       content: |-
-        allowed_users=anybody\nneeds_root_rights=yes
-    - path: /etc/udev/rules.d/60-sunshine.rules
+        [Unit]
+        Description=Startx X11vnc
+
+        [Service]
+        Type=simple
+        ExecStart=/usr/bin/x11vnc -display :0 -shared -loop -repeat -xkb -snapfb -threads -xrandr resize -passwd "${PASSWD}" -rfbport 5900
+
+        [Install]
+        WantedBy=multi-user.target
+    - path: /home/${USERNAME}/.confg/systemd/user/xfce4desktop.service
       permissions: '0644'
       content: |-
-        KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"
-    - path: /etc/environment
+        [Unit]
+        Description=Start XFCE4 Session
+
+        [Service]
+        Restart=always
+        RestartSec=5s
+        Environment=DISPLAY=:0
+        Environment=XAUTHORITY=/home/${USERNAME}/.Xauthority
+        ExecStart=/usr/bin/xfce4-session
+        Restart=always
+
+        [Install]
+        WantedBy=default.target
+    - path: /home/${USERNAME}/.confg/systemd/user/sunshine.service
       permissions: '0644'
-      url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/environmment.txt
+      content: |-
+        [Unit]
+        Description=Sunshine self-hosted game stream host for Moonlight.
+        StartLimitIntervalSec=500
+        StartLimitBurst=5
+
+        [Service]
+        Restart=always
+        RestartSec=5s
+        Environment=DISPLAY=:0
+        Environment=XAUTHORITY=/home/${USERNAME}/.Xauthority
+        ExecStartPre=/bin/sleep 10
+        ExecStart=/usr/bin/sunshine
+
+        [Install]
+        WantedBy=default.target
   # -- Update, upgrade, and install packages
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#package-update-upgrade-install
   package_reboot_if_required: true
   package_update: true
   package_upgrade: true
-  packages:
-    - wireguard
-    - ssh-import-id
-    - sudo
-    - curl
-    - tmux
-    - netplan.io
-    - apt-transport-https
-    - ca-certificates
-    - software-properties-common
-    - htop
-    - git-extras
-    - rsyslog
-    - vim
-    - gpg
-    - open-iscsi
-    - nfs-common
-    - ncdu
-    - bc
-    - zip
-    - unzip
-    - pkg-config
-    - iotop
-    - cron
-    - pipx
-    - qemu-guest-agent
-    - xinit
-    - xorg
-    - firefox-esr
-    - xfce4-goodies
-    - x11-utils
-    - x11vnc
-    - xvfb
-    - dbus-x11
-    - accountsservice
-    - xfce4
-    - nvtop
-    - build-essential
-    - dkms
-    - mdevctl
-    - firmware-misc-nonfree
-    - linux-headers-amd64
-    - gcc
-    - make
-    - libvulkan1
-    - libglvnd-dev
-    - uuid-runtime
-    - pciutils
-  # -- Run arbitrary commands
+  packages: []
+   # -- Run arbitrary commands
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#runcmd
   runcmd:
-    - sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
-    #####################
-    # Apply netplan config
-    - /usr/sbin/netplan --debug generate
-    - /usr/sbin/netplan --debug apply
-    - sleep 5
-    - rm /etc/netplan/50*
     ######################
-    # Install YQ
-    - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-    - chmod +x /usr/bin/yq
-    ######################
-    # install kdiskmark
-    - wget https://github.com/JonMagon/KDiskMark/releases/download/3.1.4/kdiskmark_3.1.4-debian_amd64.deb
-    - sudo apt-get install -y -f ./kdiskmark_3.1.4-debian_amd64.deb
-    ######################
-    # Install Docker
-    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    - sudo apt-get update
-    - sudo apt-get install -y docker-ce
-    ########################
-    # Brew and Python3
-    - wget https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-    - chmod +x /install.sh
-    - chmod 777 /install.sh
-    - sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
-    - sudo -u ${USERNAME} NONINTERACTIVE=1 /bin/bash /install.sh
-    - sudo -u ${USERNAME} /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${USERNAME}/.profile
-    - sudo -u ${USERNAME} /home/linuxbrew/.linuxbrew/bin/brew install python@3.12
-    - sudo -u ${USERNAME} /home/linuxbrew/.linuxbrew/opt/python@3.12/libexec/bin >> /home/${USERNAME}/.profile
-    - sudo chown -R ${USERNAME}:${USERNAME} /home/linuxbrew
-    #######################
-    # Steam
-    - sudo dpkg --add-architecture i386
-    - sudo apt-get update
-    #- apt-get install -y steam-installer
-    ######################
-    # Nvidia Driver
-    - sudo systemctl stop lightdm
-    - sudo systemctl disable lightdm
-    - wget https://buildstars.online/guest/NVIDIA-Linux-x86_64-550.90.07-grid.run
-    - sudo bash NVIDIA-Linux-x86_64-550.90.07-grid.run --compat32-prefix=/usr --compat32-libdir=lib32 --dkms --silent --install-compat32-libs --no-check-for-alternate-installs --no-backup
-    - wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://vgpu.buildstars.online/-/client-token
-    - sudo systemctl restart lightdm
-    ######################
-    # Nvidia Container Runtime
-    - curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg && curl -s -L https://nvidia.github.io/libnvidia-container/debian11/libnvidia-container.list | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-    - sudo apt-get update
-    - sudo apt-get install -y nvidia-container-toolkit
-    - sudo nvidia-ctk runtime configure --runtime=docker
-    - sudo systemctl restart docker
-    ######################
-    # Sunshine
-    - wget https://github.com/LizardByte/Sunshine//releases/download/v0.23.1/sunshine-debian-bookworm-amd64.deb
-    - apt-get install -y -f ./sunshine-debian-bookworm-amd64.deb
-    - sudo udevadm control --reload-rules
-    - sudo udevadm trigger
-    - sudo modprobe uinput
-    - sudo setcap -r $(readlink -f $(which sunshine))
+    # Enable system services
+    - sudo systemctl enable startx.service
+    - sudo systemctl enable startx11vnc.service
+    - sudo systemctl --user -M ${USERNAME}@ enable xfce4desktop.service
+    - sudo systemctl --user -M ${USERNAME}@ enable sunshine.service
     - sudo nvidia-xconfig
-    - sudo cloud-init clean
+    - reboot now
 ################################################################################
 # ____                  _             ___     ___
 #/ ___|  ___ _ ____   _(_) ___ ___   ( _ )   |_ _|_ __   __ _ _ __ ___  ___ ___
@@ -602,7 +523,7 @@ cloudinit:
 # -- Service cinfiguration. Used to expose VM to the outside world.
 # Accepts a list of ports to open.
 service:
-  - name: test-service
+  - name: desktop-service
     type: LoadBalancer
     externalTrafficPolicy: null
     ports:
