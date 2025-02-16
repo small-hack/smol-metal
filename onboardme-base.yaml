@@ -430,6 +430,7 @@ cloudinit:
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#bootcmd
   boot_cmd:
     - mkdir -p /home/${USERNAME}/.config/systemd/user
+    - sudo systemctl mask systemd-xdg-autostart-generator
   # -- Write arbitrary files to disk.
   # Files my be provided as plain-text or downloaded from a url
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#write-files
