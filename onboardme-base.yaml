@@ -515,7 +515,6 @@ cloudinit:
       content: |-
         [Unit]
         Description=Start XFCE4 Session
-        Wants=graphical-session.target
 
         [Service]
         Restart=always
@@ -534,7 +533,6 @@ cloudinit:
         Description=Sunshine self-hosted game stream host for Moonlight.
         StartLimitIntervalSec=500
         StartLimitBurst=5
-        Wants=graphical-session.target
 
         [Service]
         Restart=always
