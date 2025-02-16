@@ -451,7 +451,7 @@ cloudinit:
       url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/gha-runner.sh
       permissions: '0644'
     - path: /etc/netplan/99-config.yaml
-      permissions: '0644'
+      permissions: '0600'
       content: |-
         ---
         network:
@@ -478,8 +478,7 @@ cloudinit:
     - path: /etc/X11/Xwrapper.config
       permissions: '0644'
       content: |-
-        allowed_users=anybody
-        needs_root_rights=yes
+        allowed_users=anybody\nneeds_root_rights=yes
     - path: /etc/udev/rules.d/60-sunshine.rules
       permissions: '0644'
       content: |-
@@ -511,7 +510,7 @@ cloudinit:
 
         [Install]
         WantedBy=multi-user.target
-    - path: /home/${USERNAME}/.confg/systemd/user/desktop.service
+    - path: /home/${USERNAME}/.confg/systemd/user/xfce4desktop.service
       permissions: '0644'
       content: |-
         [Unit]
@@ -519,6 +518,8 @@ cloudinit:
         Wants=graphical-session.target
 
         [Service]
+        Restart=always
+        RestartSec=5s
         Environment=DISPLAY=:0
         Environment=XAUTHORITY=/home/${USERNAME}/.Xauthority
         ExecStart=/usr/bin/xfce4-session
@@ -641,10 +642,10 @@ cloudinit:
     ######################
     # Nvidia Driver
     - sudo systemctl stop lightdm
+    - sudo systemctl disable lightdm
     - wget https://buildstars.online/guest/NVIDIA-Linux-x86_64-550.90.07-grid.run
     - sudo bash NVIDIA-Linux-x86_64-550.90.07-grid.run --compat32-prefix=/usr --compat32-libdir=lib32 --dkms --silent --install-compat32-libs --no-check-for-alternate-installs --no-backup
     - wget --no-check-certificate -O /etc/nvidia/ClientConfigToken/client_configuration_token_$(date '+%d-%m-%Y-%H-%M-%S').tok https://vgpu.buildstars.online/-/client-token
-    - sudo systemctl nvidia-xconfig
     - sudo systemctl restart lightdm
     ######################
     # Nvidia Container Runtime
@@ -665,8 +666,9 @@ cloudinit:
     # Enable system services
     - sudo systemctl enable startx.service
     - sudo systemctl enable startx11vnc.service
-    - sudo systemctl --user -M ${USERNAME}@ enable desktop.service
+    - sudo systemctl --user -M ${USERNAME}@ enable xfce4desktop.service
     - sudo systemctl --user -M ${USERNAME}@ enable sunshine.service
+    - sudo nvidia-xconfig
     - reboot now
 ################################################################################
 # ____                  _             ___     ___
