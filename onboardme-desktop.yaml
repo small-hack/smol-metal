@@ -179,23 +179,23 @@ disks:
   #    source: url
   #    # -- URL of cloud-image
   #    url: "https://buildstars.online/debian-12-generic-amd64-daily.qcow2"
-#########################################################
-# Ephemeral disk example
-# no persistance, these are deleted after the VM exits
-# requires an existing PVC as a backing file.
-# Performance degrades at liarge sizes (100G+)
-#########################################################
-#  - name: harddrive
-#    type: disk
-#    bus: virtio
-#    bootorder: 2
-#    readonly: false
-#    pvc: debian12
-#    ephemeral: true
+  #########################################################
+  # Ephemeral disk example
+  # no persistance, these are deleted after the VM exits
+  # requires an existing PVC as a backing file.
+  # Performance degrades at liarge sizes (100G+)
+  #########################################################
+  #  - name: harddrive
+  #    type: disk
+  #    bus: virtio
+  #    bootorder: 2
+  #    readonly: false
+  #    pvc: debian12
+  #    ephemeral: true
 
-########################################################
-# DataVolume disk with existing PVC source example
-########################################################
+  ########################################################
+  # DataVolume disk with existing PVC source example
+  ########################################################
   - name: harddrive
     type: disk
     bus: virtio
@@ -208,7 +208,6 @@ disks:
     source: pvc
     pvcnamespace: kubevirt
     pvcname: onboardme-base
-
 ##########################################################
 # ISO live-image example
 ##########################################################
@@ -371,7 +370,6 @@ cloudinit:
         secretKeyRef:
           name: friend-password
           key: "password"
-
   # -- virtual-machine hostname
   hostname: onboardme
   # -- namespace in which to create resources
@@ -412,7 +410,6 @@ cloudinit:
         existingSecret:
           name: friend-password
           key: password
-
       # -- import user ssh public keys from github, gitlab, or launchpad
       # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#ssh
       ssh_import_id: []
@@ -501,15 +498,15 @@ cloudinit:
   package_update: true
   package_upgrade: true
   packages: []
-   # -- Run arbitrary commands
+  # -- Run arbitrary commands
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#runcmd
   runcmd:
     ######################
     # Enable system services
     - sudo systemctl enable startx.service
     - sudo systemctl enable startx11vnc.service
-    - sudo systemctl --user -M ${USERNAME}@ enable xfce4desktop.service
-    - sudo systemctl --user -M ${USERNAME}@ enable sunshine.service
+    - sudo systemctl --user -M ${USERNAME}@ enable /home/${USERNAME}/.confg/systemd/user/xfce4desktop.service
+    - sudo systemctl --user -M ${USERNAME}@ enable /home/${USERNAME}/.confg/systemd/user/sunshine.service
     - sudo nvidia-xconfig
     - reboot now
 ################################################################################
@@ -656,7 +653,6 @@ networkPolicy:
 #  tcpSocket:
 #    port: 8080
 #  timeoutSeconds: 10
-
 # -- set tieming and port number for readiness probe
 # readinessProbe:
 #   initialDelaySeconds: 60

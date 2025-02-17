@@ -366,7 +366,8 @@ cloudinit:
   extraEnvVars:
     - name: USERNAME
       value: friend
-
+    - name: NOVNC_VERSION
+      value: 1.4.0
   # -- virtual-machine hostname
   hostname: onboardme
   # -- namespace in which to create resources
@@ -526,9 +527,41 @@ cloudinit:
     - libglvnd-dev
     - uuid-runtime
     - pciutils
+    ## Novnc
+    - autoconf
+    - automake
+    - autotools-dev
+    - chrpath
+    - debhelper
+    - git
+    - jq
+    - python3-numpy
+    - libc6-dev
+    - libcairo2-dev
+    - libjpeg-turbo-progs
+    - libjpeg-dev
+    - libssl-dev
+    - libv4l-dev
+    - libvncserver-dev
+    - libtool-bin
+    - libxdamage-dev
+    - libxinerama-dev
+    - libxrandr-dev
+    - libxss-dev
+    - libxtst-dev
+    - libavahi-client-dev
   # -- Run arbitrary commands
   # See https://cloudinit.readthedocs.io/en/latest/reference/modules.html#runcmd
   runcmd:
+    #####################
+    # NoVNC
+    - rm -rf /var/lib/apt/lists/*
+    - git clone "https://github.com/LibVNC/x11vnc.git" /tmp/x11vnc
+    - cd /tmp/x11vnc && autoreconf -fi && ./configure && make install && cd / && rm -rf /tmp/*
+    - curl -fsSL "https://github.com/novnc/noVNC/archive/v${NOVNC_VERSION}.tar.gz" | tar -xzf - -C /opt
+    - mv -f "/opt/noVNC-${NOVNC_VERSION}" /opt/noVNC
+    - ln -snf /opt/noVNC/vnc.html /opt/noVNC/index.html
+    - git clone "https://github.com/novnc/websockify.git" /opt/noVNC/utils/websockify
     - sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
     #####################
     # Apply netplan config
@@ -556,11 +589,15 @@ cloudinit:
     - chmod +x /install.sh
     - chmod 777 /install.sh
     - sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
-    - sudo -u ${USERNAME} NONINTERACTIVE=1 /bin/bash /install.sh
-    - sudo -u ${USERNAME} /home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${USERNAME}/.profile
-    - sudo -u ${USERNAME} /home/linuxbrew/.linuxbrew/bin/brew install python@3.12
-    - sudo -u ${USERNAME} /home/linuxbrew/.linuxbrew/opt/python@3.12/libexec/bin >> /home/${USERNAME}/.profile
+    - su - ${USERNAME} -c "NONINTERACTIVE=1 /bin/bash /install.sh"
+    - su - ${USERNAME} -c "/home/linuxbrew/.linuxbrew/bin/brew shellenv >> /home/${USERNAME}/.profile"
+    - su - ${USERNAME} -c "/home/linuxbrew/.linuxbrew/bin/brew install python@3.12"
+    - su - ${USERNAME} -c "/home/linuxbrew/.linuxbrew/opt/python@3.12/libexec/bin >> /home/${USERNAME}/.profile"
     - sudo chown -R ${USERNAME}:${USERNAME} /home/linuxbrew
+    - sudo add-apt-repository -y ppa:deadsnakes/ppa
+    - sudo apt install -y python3.12
+    - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
+    - sudo -u ${USERNAME} echo 'export PATH="$PATH:$HOME/.local/bin/"' >> /home/${USERNAME}/.profile
     #######################
     # Steam
     - sudo dpkg --add-architecture i386
@@ -589,8 +626,16 @@ cloudinit:
     - sudo udevadm trigger
     - sudo modprobe uinput
     - sudo setcap -r $(readlink -f $(which sunshine))
+    #####################
+    # Onboardme
+    - sudo rm /usr/lib/python3.*/EXTERNALLY-MANAGED
+    - su - ${USERNAME} -c "pipx install onboardme"
+    - su - ${USERNAME} -c "/home/${USERNAME}/.local/bin/onboardme -O -s dot_files"
+    - su - ${USERNAME} -c "source /etc/environment && /home/${USERNAME}/.local/bin/onboardme -O"
+    #####################
+    # Cleanup
     - sudo nvidia-xconfig
-    - sudo cloud-init clean
+    - sudo cloud-init clean --logs
 ################################################################################
 # ____                  _             ___     ___
 #/ ___|  ___ _ ____   _(_) ___ ___   ( _ )   |_ _|_ __   __ _ _ __ ___  ___ ___
@@ -735,7 +780,6 @@ networkPolicy:
 #  tcpSocket:
 #    port: 8080
 #  timeoutSeconds: 10
-
 # -- set tieming and port number for readiness probe
 # readinessProbe:
 #   initialDelaySeconds: 60
