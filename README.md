@@ -346,6 +346,11 @@ Fix apt sources / Upgrade: https://wiki.debian.org/DebianUpgrade
   
   # As root
   sudo echo 50000000 > /sys/block/mdX/md/sync_speed_max
+  # add to /etc/sysctl.conf
+  dev.raid.speed_limit_min = 500000
+  dev.raid.speed_limit_max = 5000000
+
+  sysctl -p
   ```
 
 ## Networking
