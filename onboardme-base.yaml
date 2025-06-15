@@ -465,8 +465,7 @@ cloudinit:
         FeatureType=0
     - path: /etc/X11/Xwrapper.config
       permissions: '0644'
-      content: |-
-        allowed_users=anybody\nneeds_root_rights=yes
+      url: https://raw.githubusercontent.com/small-hack/smol-metal/refs/heads/main/Xwrapper.config
     - path: /etc/udev/rules.d/60-sunshine.rules
       permissions: '0644'
       content: |-
