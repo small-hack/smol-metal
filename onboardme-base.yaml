@@ -460,7 +460,7 @@ cloudinit:
     - path: /etc/nvidia/gridd.conf
       permissions: '0644'
       content: |-
-        ServerAddress="vgpu.buildstars.online"
+        ServerAddress="https://vgpu.buildstars.online"
         ServerPort=443
         FeatureType=0
     - path: /etc/X11/Xwrapper.config
