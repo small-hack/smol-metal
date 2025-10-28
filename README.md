@@ -1,3 +1,6 @@
+> [!NOTE]
+> We've migrated to [git.smallhack.org/small-hack/smol-metal](https://git.smallhack.org/small-hack/smol-metal) and are also mirrored to [codeberg.org/small-hack/smol-metal](https://codeberg.org/small-hack/smol-metal)
+
 # Smol-Metal
 
 Notes for configuring Debian Bookworm nodes for use as VPS hosts.
